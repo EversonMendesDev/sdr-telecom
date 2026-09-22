@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everson Tech - SDR Telecom System</title>
+    <title>Everson Tech - SDR Telecom & Gestão Executiva</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -39,24 +39,22 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(12px);
+            background: rgba(15, 23, 42, 0.82);
+            backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #070a11;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
+        .glow-cyan { box-shadow: 0 0 25px rgba(0, 240, 255, 0.15); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #070a11; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        .kanban-col { min-height: 320px; }
+        .dragging { opacity: 0.4; transform: scale(0.98); }
     </style>
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen custom-scrollbar antialiased selection:bg-cyanaccent selection:text-slate-900">
+
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
 
     <!-- ==================== TELA 1: LOGIN ==================== -->
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-darkbg to-black">
@@ -123,7 +121,6 @@
                     </div>
                 </div>
             </div>
-            
             <p class="text-center text-xs text-slate-600 mt-6">Everson Tech © 2026</p>
         </div>
     </div>
@@ -141,13 +138,13 @@
                     </div>
                     <div>
                         <h1 class="font-black text-base text-white tracking-tight">EVERSON<span class="text-cyanaccent">TECH</span></h1>
-                        <span class="text-[10px] font-bold text-slate-400 block -mt-1">SDR TELECOM SYSTEM</span>
+                        <span class="text-[10px] font-bold text-slate-400 block -mt-1">SDR TELECOM & EXEC RESULTS</span>
                     </div>
                 </div>
 
                 <div class="hidden md:flex items-center space-x-2 bg-emerald-950/40 border border-emerald-800/50 px-3 py-1 rounded-full">
                     <span class="w-2 h-2 rounded-full bg-emeraldgreen animate-pulse"></span>
-                    <span class="text-xs font-semibold text-emerald-400">BrasilAPI (Receita Federal) Ativa</span>
+                    <span class="text-xs font-semibold text-emerald-400">BrasilAPI & ViaCEP Ativos</span>
                 </div>
             </div>
 
@@ -171,31 +168,59 @@
 
         <div class="flex-1 p-4 lg:p-8 max-w-[1600px] w-full mx-auto space-y-6">
 
-            <!-- CONSULTA CNPJ AO VIVO -->
-            <div class="glass-panel p-4 rounded-2xl border border-cyanaccent/30 bg-slate-900/90 shadow-xl">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+            <!-- CONSULTAS EM TEMPO REAL: CNPJ & CEP MANUAL -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                
+                <!-- Consulta CNPJ BrasilAPI -->
+                <div class="glass-panel p-4 rounded-2xl border border-cyanaccent/30 bg-slate-900/90 shadow-xl space-y-3">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-xl bg-cyanaccent/10 border border-cyanaccent/30 text-cyanaccent flex items-center justify-center text-lg">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                        <div class="w-9 h-9 rounded-xl bg-cyanaccent/10 border border-cyanaccent/30 text-cyanaccent flex items-center justify-center text-base">
+                            <i class="fa-solid fa-building"></i>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                Consulta de CNPJ ao Vivo via Receita Federal
-                                <span class="bg-cyanaccent/20 text-cyanaccent text-[10px] px-2 py-0.5 rounded font-mono">BrasilAPI</span>
+                            <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                                Consulta de CNPJ ao Vivo (Receita Federal)
                             </h3>
-                            <p class="text-xs text-slate-400">Digite qualquer CNPJ real do Brasil para puxar os dados oficiais instantaneamente.</p>
+                            <p class="text-[11px] text-slate-400">Puxe os dados cadastrais da empresa instantaneamente.</p>
                         </div>
                     </div>
-
-                    <div class="w-full md:w-auto flex items-center space-x-2">
+                    <div class="flex items-center space-x-2">
                         <input type="text" id="directCnpjInput" placeholder="Ex: 33.000.167/0001-01" 
-                            class="w-full md:w-80 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-cyanaccent focus:outline-none">
-                        <button onclick="lookupDirectCnpj()" class="bg-cyanaccent hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 rounded-xl text-xs flex items-center space-x-1 transition-all whitespace-nowrap shadow-lg shadow-cyanaccent/10">
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyanaccent focus:outline-none">
+                        <button onclick="lookupDirectCnpj()" class="bg-cyanaccent hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1 transition-all whitespace-nowrap shadow-lg shadow-cyanaccent/10">
                             <i class="fa-solid fa-cloud-arrow-down"></i>
-                            <span>Consultar API</span>
+                            <span>Consultar CNPJ</span>
                         </button>
                     </div>
                 </div>
+
+                <!-- Consulta CEP Manual com Rate-Limit -->
+                <div class="glass-panel p-4 rounded-2xl border border-emeraldgreen/30 bg-slate-900/90 shadow-xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-9 h-9 rounded-xl bg-emeraldgreen/10 border border-emeraldgreen/30 text-emeraldgreen flex items-center justify-center text-base">
+                                <i class="fa-solid fa-map-location-dot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                                    Pesquisa Manual de CEP & Viabilidade Fibra
+                                </h3>
+                                <p class="text-[11px] text-slate-400">Valide o endereço operacional real do cliente.</p>
+                            </div>
+                        </div>
+                        <span id="cepCooldownBadge" class="hidden text-[10px] font-mono bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full">Aguarde...</span>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="manualCepInput" placeholder="Ex: 01310-100" 
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-emeraldgreen focus:outline-none">
+                        <button id="btnSearchCep" onclick="searchManualCep()" class="bg-emeraldgreen hover:bg-emerald-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs flex items-center space-x-1 transition-all whitespace-nowrap shadow-lg shadow-emeraldgreen/10">
+                            <i class="fa-solid fa-wifi"></i>
+                            <span>Checar Fibra</span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
 
             <!-- CARDS KPI DE DESEMPENHO -->
@@ -266,7 +291,12 @@
 
                 <button onclick="switchTab('kanbanTab')" id="tabBtn-kanbanTab" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-900">
                     <i class="fa-solid fa-kanban"></i>
-                    <span>Kanban SDR</span>
+                    <span>Kanban SDR (Drag & Drop)</span>
+                </button>
+
+                <button onclick="switchTab('execResultsTab')" id="tabBtn-execResultsTab" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-900">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span>Resultados Executivos & Metas</span>
                 </button>
 
                 <button onclick="switchTab('scriptsTab')" id="tabBtn-scriptsTab" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-900">
@@ -280,7 +310,7 @@
                 </button>
             </div>
 
-            <!-- TAB 1: BASE DE LEADS & FILTROS -->
+            <!-- TAB 1: BASE DE LEADS & FILTROS CORRIGIDOS -->
             <div id="leadsTab" class="tab-content space-y-4">
                 <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-3">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -288,11 +318,11 @@
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Região do País</label>
                             <select id="filterRegion" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                                 <option value="ALL">Todas as Regiões</option>
-                                <option value="Sudeste">Sudeste</option>
-                                <option value="Sul">Sul</option>
-                                <option value="Centro-Oeste">Centro-Oeste</option>
-                                <option value="Nordeste">Nordeste</option>
-                                <option value="Norte">Norte</option>
+                                <option value="Nordeste">Nordeste (BA, CE, PE, MA...)</option>
+                                <option value="Sudeste">Sudeste (SP, RJ, MG, ES)</option>
+                                <option value="Sul">Sul (PR, SC, RS)</option>
+                                <option value="Centro-Oeste">Centro-Oeste (GO, DF, MT, MS)</option>
+                                <option value="Norte">Norte (AM, PA, AC...)</option>
                             </select>
                         </div>
 
@@ -300,12 +330,14 @@
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Estado (UF)</label>
                             <select id="filterUF" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
                                 <option value="ALL">Todos os Estados</option>
+                                <option value="BA">Bahia (BA)</option>
+                                <option value="CE">Ceará (CE)</option>
+                                <option value="PE">Pernambuco (PE)</option>
                                 <option value="SP">São Paulo (SP)</option>
                                 <option value="RJ">Rio de Janeiro (RJ)</option>
                                 <option value="MG">Minas Gerais (MG)</option>
                                 <option value="PR">Paraná (PR)</option>
                                 <option value="SC">Santa Catarina (SC)</option>
-                                <option value="BA">Bahia (BA)</option>
                                 <option value="GO">Goiás (GO)</option>
                             </select>
                         </div>
@@ -342,9 +374,9 @@
                     <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                         <h3 class="text-sm font-bold text-white flex items-center space-x-2">
                             <span>CNPJs Recém-Abertos Qualificados</span>
-                            <span id="filteredCount" class="bg-cyanaccent/20 text-cyanaccent text-xs font-mono px-2 py-0.5 rounded-full">6 de 6</span>
+                            <span id="filteredCount" class="bg-cyanaccent/20 text-cyanaccent text-xs font-mono px-2 py-0.5 rounded-full">0</span>
                         </h3>
-                        <span class="text-xs text-slate-400">Clique na empresa para ver a viabilidade técnica e dados oficiais</span>
+                        <span class="text-xs text-slate-400">Clique na empresa para checar a viabilidade de fibra no endereço</span>
                     </div>
 
                     <div class="overflow-x-auto custom-scrollbar">
@@ -356,7 +388,7 @@
                                     <th class="p-3.5">Região / UF</th>
                                     <th class="p-3.5">Segmento (CNAE)</th>
                                     <th class="p-3.5">Oferta Principal</th>
-                                    <th class="p-3.5">Score Telecom</th>
+                                    <th class="p-3.5">Viabilidade Fibra</th>
                                     <th class="p-3.5 text-center">Ações SDR</th>
                                 </tr>
                             </thead>
@@ -366,64 +398,137 @@
                 </div>
             </div>
 
-            <!-- TAB 2: KANBAN SDR -->
+            <!-- TAB 2: KANBAN SDR DRAG & DROP -->
             <div id="kanbanTab" class="tab-content hidden space-y-4">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-hand-pointer text-cyanaccent"></i> <strong>SDR:</strong> Arraste e solte os cards entre as colunas para avançar o lead no funil.</p>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3">
+                    
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 1)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <span class="text-xs font-bold text-slate-300">Dia 1: Boas-Vindas</span>
-                            <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">12</span>
+                            <span id="kb-count-1" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-1"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-1"></div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3">
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 2)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <span class="text-xs font-bold text-slate-300">Dia 2: Cold Call</span>
-                            <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">8</span>
+                            <span id="kb-count-2" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-2"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-2"></div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3">
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 3)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <span class="text-xs font-bold text-slate-300">Dia 4: WhatsApp Solução</span>
-                            <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">15</span>
+                            <span id="kb-count-3" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-3"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-3"></div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3">
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 4)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
                             <span class="text-xs font-bold text-slate-300">Dia 6: Viabilidade</span>
-                            <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">6</span>
+                            <span id="kb-count-4" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-4"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-4"></div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3">
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[240px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 5)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <span class="text-xs font-bold text-slate-300">Dia 8: Case & Proposta</span>
-                            <span class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">4</span>
+                            <span class="text-xs font-bold text-slate-300">Dia 8: Proposta</span>
+                            <span id="kb-count-5" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-5"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-5"></div>
                     </div>
 
-                    <div class="glass-panel p-3 rounded-2xl border border-emeraldgreen/30 min-w-[240px] space-y-3 bg-emerald-950/10">
+                    <div class="glass-panel p-3 rounded-2xl border border-emeraldgreen/30 min-w-[240px] space-y-3 bg-emerald-950/10" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 6)">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                            <span class="text-xs font-bold text-emeraldgreen">SQL / Agendado</span>
-                            <span class="text-[10px] font-mono bg-emeraldgreen/20 text-emeraldgreen px-2 py-0.5 rounded">9</span>
+                            <span class="text-xs font-bold text-emeraldgreen">SQL / Fechado</span>
+                            <span id="kb-count-6" class="text-[10px] font-mono bg-emeraldgreen/20 text-emeraldgreen px-2 py-0.5 rounded">0</span>
                         </div>
-                        <div class="space-y-2" id="kanban-stage-6"></div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-6"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 3: PLAYBOOK & SCRIPTS -->
+            <!-- TAB 3: RESULTADOS EXECUTIVOS (METAS, RANKING, PRODUTO MAIS VENDIDO) -->
+            <div id="execResultsTab" class="tab-content hidden space-y-6">
+                
+                <!-- BANNER DE DESTAQUE EXECUTIVO -->
+                <div class="glass-panel p-6 rounded-2xl border border-cyanaccent/30 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-cyanaccent"></i>
+                                Painel Executivo de Performance Comercial
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">Acompanhamento em tempo real de metas de MRR, ranking de pré-vendas e mix de soluções telecom.</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-center">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase block">Meta Global MRR</span>
+                                <span class="text-sm font-black text-cyanaccent">R$ 48.000,00</span>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-800 px-4 py-2 rounded-xl text-center">
+                                <span class="text-[10px] font-bold text-slate-400 uppercase block">Realizado Global</span>
+                                <span id="globalAchievedMrr" class="text-sm font-black text-emeraldgreen">R$ 0,00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- RANKING E METAS POR VENDEDOR -->
+                    <div class="lg:col-span-2 glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                                <i class="fa-solid fa-trophy text-amber-400"></i>
+                                Ranking & Desempenho por SDR
+                            </h3>
+                            <span class="text-[10px] text-slate-400 font-mono">Atualizado ao vivo</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-slate-300">
+                                <thead class="bg-slate-950 text-slate-400 uppercase font-mono text-[10px]">
+                                    <tr>
+                                        <th class="p-3">Posição / SDR</th>
+                                        <th class="p-3">Meta MRR</th>
+                                        <th class="p-3">Realizado (SQL)</th>
+                                        <th class="p-3">Atingimento</th>
+                                        <th class="p-3">Produto Mais Vendido</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sdrRankingTable" class="divide-y divide-slate-800"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- MIX DE PRODUTOS MAIS VENDIDOS POR SDR -->
+                    <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-boxes-stacked text-electricblue"></i>
+                            Produtos Líderes por SDR
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Aderência por solução telecom do vendedor com maior volume de SQLs.</p>
+
+                        <div id="productBySdrList" class="space-y-3"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 4: PLAYBOOK & SCRIPTS -->
             <div id="scriptsTab" class="tab-content hidden space-y-4">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
-                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Configurar Abordagem</h3>
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Configurar Abordagem</h3>
                         
                         <div>
                             <label class="block text-xs font-semibold text-slate-400 mb-1">Selecione o Segmento</label>
@@ -447,7 +552,7 @@
 
                     <div class="lg:col-span-2 glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-bold text-white">Script Personalizado Gerado</h3>
+                            <h3 class="text-xs font-bold text-white">Script Personalizado Gerado</h3>
                             <button onclick="copyScriptText()" class="bg-slate-800 hover:bg-slate-700 text-cyanaccent px-3 py-1.5 rounded-lg text-xs font-semibold">
                                 <i class="fa-regular fa-copy"></i> Copiar Texto
                             </button>
@@ -458,16 +563,16 @@
                 </div>
             </div>
 
-            <!-- TAB 4: ANALYTICS & REDE -->
+            <!-- TAB 5: ANALYTICS & REDE -->
             <div id="analyticsTab" class="tab-content hidden space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
-                        <h3 class="text-sm font-bold text-white">Distribuição de Novos CNPJs por Região</h3>
+                        <h3 class="text-xs font-bold text-white">Distribuição de Novos CNPJs por Região</h3>
                         <div class="h-64 relative"><canvas id="regionChart"></canvas></div>
                     </div>
 
                     <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
-                        <h3 class="text-sm font-bold text-white">Mix de Produtos Solicitados (&lt;30 dias)</h3>
+                        <h3 class="text-xs font-bold text-white">Mix de Produtos Solicitados (&lt;30 dias)</h3>
                         <div class="h-64 relative"><canvas id="productChart"></canvas></div>
                     </div>
                 </div>
@@ -476,7 +581,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE DETALHES -->
+    <!-- MODAL DE DETALHES DE LEAD COM VALIDAÇÃO DE CEP & LEMBRETE FISCAL -->
     <div id="leadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-2xl rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative max-h-[90vh] flex flex-col">
             <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/80">
@@ -490,32 +595,45 @@
             </div>
 
             <div class="p-6 overflow-y-auto custom-scrollbar space-y-5 text-xs">
-                <div id="modalApiBox" class="p-4 bg-slate-900 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-bold text-white flex items-center gap-2">
-                            <i class="fa-solid fa-server text-cyanaccent"></i> Validação na Receita Federal (BrasilAPI)
-                        </span>
-                        <button id="btnFetchBrasilApi" onclick="fetchModalCnpjBrasilApi()" class="bg-cyanaccent/10 hover:bg-cyanaccent/20 text-cyanaccent border border-cyanaccent/30 px-3 py-1 rounded-lg text-[11px] font-bold">
-                            Verificar Dados Oficiais
-                        </button>
-                    </div>
-                    <div id="modalApiResult" class="text-[11px] text-slate-400">
-                        Clique no botão acima para puxar os dados mais recentes cadastrados na Receita Federal.
+                
+                <!-- BANNER DE ALERTA DE ENDEREÇO FISCAL PARA O SDR -->
+                <div class="bg-amber-950/50 border border-amber-500/40 p-3.5 rounded-xl flex items-start space-x-3">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base mt-0.5"></i>
+                    <div class="space-y-1">
+                        <p class="font-bold text-amber-200">Lembrete de Abordagem SDR (Endereço Fiscal):</p>
+                        <p class="text-amber-300/90 text-[11px] leading-relaxed">
+                            Confirme com o cliente se o local de instalação da Fibra é o <strong>mesmo Endereço Fiscal</strong> do CNPJ ou se a operação física fica num endereço diferente.
+                        </p>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800/80">
-                    <div>
-                        <span class="text-[10px] text-slate-500 uppercase block font-bold">Data de Abertura</span>
-                        <span id="modalAbertura" class="font-semibold text-slate-200">12/09/2026</span>
+                <!-- DADOS DA RECEITA E VIABILIDADE CEP -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="text-[10px] text-slate-500 uppercase font-bold block">CEP & Localidade Registrada</span>
+                        <p id="modalCep" class="font-mono font-bold text-cyanaccent text-xs">01310-100</p>
+                        <p id="modalEndereco" class="text-slate-300 text-[11px]">Av. Paulista, São Paulo - SP</p>
                     </div>
-                    <div>
-                        <span class="text-[10px] text-slate-500 uppercase block font-bold">Estado / Cidade</span>
-                        <span id="modalUfCidade" class="font-semibold text-slate-200">SP - São Paulo</span>
+
+                    <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="text-[10px] text-slate-500 uppercase font-bold block">Status Viabilidade Fibra</span>
+                        <p id="modalViabilidade" class="font-bold text-emeraldgreen text-xs">✅ Viável - Armário GPON a 80m</p>
+                        <p id="modalSdrOwner" class="text-slate-400 text-[11px]">SDR: Carlos Silva</p>
                     </div>
-                    <div>
-                        <span class="text-[10px] text-slate-500 uppercase block font-bold">Viabilidade Fibra</span>
-                        <span id="modalViabilidade" class="font-bold text-emeraldgreen">Alta (Armário a 120m)</span>
+                </div>
+
+                <!-- BOTAO CONSULTAR VIABILIDADE POR CEP DO MODAL -->
+                <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-white flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-magnifying-glass-location text-emeraldgreen"></i> Revalidar Viabilidade em Outro CEP
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="modalCepInput" placeholder="Digite novo CEP da operação..." class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:border-emeraldgreen focus:outline-none w-full">
+                        <button onclick="checkModalCepViability()" class="bg-emeraldgreen hover:opacity-90 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap">
+                            Revalidar CEP
+                        </button>
                     </div>
                 </div>
 
@@ -539,39 +657,82 @@
         </div>
     </div>
 
-    <!-- LÓGICA JAVASCRIPT VERSÃO 1 -->
+    <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
     <script>
-        const leadsData = [
-            { id: 1, name: "ALPHA LOGISTICA & DISTRIBUICAO LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 4, region: "Sudeste", uf: "SP", segment: "Logística & Transportes", offer: "Móvel M2M + Fibra Dedicada", score: 95, phone: "11998823120", stage: 1 },
-            { id: 2, name: "CLINICA BEM ESTAR & SAUDE INTEGRADA", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 8, region: "Sul", uf: "PR", segment: "Saúde & Clínicas", offer: "PABX Cloud + Banda Larga", score: 88, phone: "41987712340", stage: 2 },
-            { id: 3, name: "NEXUS TECNOLOGIA E CONSULTORIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 12, region: "Sudeste", uf: "MG", segment: "Serviços Profissionais", offer: "Fibra IP Dedicado + Firewall", score: 92, phone: "31991234567", stage: 3 },
-            { id: 4, name: "SUPERMERCADO NOVO HORIZONTE LTDA", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 15, region: "Nordeste", uf: "BA", segment: "Comércio & Varejo", offer: "Fibra PME + Chip POS M2M", score: 85, phone: "71981122334", stage: 4 },
-            { id: 5, name: "CONSTRUTORA E EDIFICACOES SUL LTDA", cnpj: "52.601.778/0001-44", cleanCnpj: "52601778000144", days: 2, region: "Sul", uf: "SC", segment: "Construção Civil", offer: "Modem 5G Obras + Móvel", score: 90, phone: "48999887766", stage: 1 },
-            { id: 6, name: "AGRO LOGISTICA CENTRO OESTE EIRELI", cnpj: "52.710.001/0001-10", cleanCnpj: "52710001000110", days: 22, region: "Centro-Oeste", uf: "GO", segment: "Logística & Transportes", offer: "Móvel Frota + Link Satelite", score: 82, phone: "62982233445", stage: 5 },
+        // MAPA RIGOROSO DE ESTADOS POR REGIÃO (CORREÇÃO DE FILTRO)
+        const regionMap = {
+            'Nordeste': ['BA', 'CE', 'PE', 'MA', 'PB', 'RN', 'AL', 'SE', 'PI'],
+            'Sudeste': ['SP', 'RJ', 'MG', 'ES'],
+            'Sul': ['PR', 'SC', 'RS'],
+            'Centro-Oeste': ['GO', 'DF', 'MT', 'MS'],
+            'Norte': ['AM', 'PA', 'AC', 'AP', 'RO', 'RR', 'TO']
+        };
+
+        // SDRs E SUAS METAS
+        const sdrsData = [
+            { id: 'sdr1', name: 'Carlos Silva', targetMrr: 8000, achievedMrr: 9500, topProduct: 'Fibra Dedicada 1Gbps' },
+            { id: 'sdr2', name: 'Ana Oliveira', targetMrr: 8000, achievedMrr: 7200, topProduct: 'PABX Cloud 20 Ramais' },
+            { id: 'sdr3', name: 'Lucas Costa', targetMrr: 8000, achievedMrr: 8800, topProduct: 'Móvel M2M / IoT' },
+            { id: 'sdr4', name: 'Mariana Santos', targetMrr: 8000, achievedMrr: 6100, topProduct: 'Fibra PME + POS' },
+            { id: 'sdr5', name: 'Felipe Rocha', targetMrr: 8000, achievedMrr: 8400, topProduct: 'Modem 5G Obras' },
+            { id: 'sdr6', name: 'Beatriz Lima', targetMrr: 8000, achievedMrr: 5900, topProduct: 'PABX Cloud Virtual' }
         ];
 
-        let activeLeadModal = null;
+        let mockLeads = [
+            { id: 101, name: "ALPHA LOGISTICA & DISTRIBUICAO LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 4, uf: "BA", cep: "40010-000", address: "Av. Estados Unidos, Salvador - BA", segment: "Logística & Transportes", offer: "Móvel M2M + Fibra Dedicada", mrrValue: 1800, stage: 1, ownerId: 'sdr1', fiberViable: true, fiberDist: '45m' },
+            { id: 102, name: "CLINICA BEM ESTAR & SAUDE INTEGRADA", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 8, uf: "CE", cep: "60165-081", address: "Av. Beira Mar, Fortaleza - CE", segment: "Saúde & Clínicas", offer: "PABX Cloud + Banda Larga", mrrValue: 1200, stage: 2, ownerId: 'sdr2', fiberViable: true, fiberDist: '120m' },
+            { id: 103, name: "NEXUS TECNOLOGIA E CONSULTORIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 12, uf: "PE", cep: "50030-230", address: "Rua do Apolo, Recife - PE", segment: "Serviços Profissionais", offer: "Fibra IP Dedicado + Firewall", mrrValue: 2400, stage: 3, ownerId: 'sdr3', fiberViable: true, fiberDist: '60m' },
+            { id: 104, name: "SUPERMERCADO NOVO HORIZONTE LTDA", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 15, uf: "SP", cep: "01310-100", address: "Av. Paulista, São Paulo - SP", segment: "Comércio & Varejo", offer: "Fibra PME + Chip POS M2M", mrrValue: 950, stage: 4, ownerId: 'sdr1', fiberViable: true, fiberDist: '30m' },
+            { id: 105, name: "CONSTRUTORA E EDIFICACOES SUL LTDA", cnpj: "52.601.778/0001-44", cleanCnpj: "52601778000144", days: 2, uf: "PR", cep: "80010-000", address: "Rua XV de Novembro, Curitiba - PR", segment: "Construção Civil", offer: "Modem 5G Obras + Móvel", mrrValue: 3100, stage: 5, ownerId: 'sdr5', fiberViable: false, fiberDist: 'Em Expansão' },
+            { id: 106, name: "AGRO LOGISTICA CENTRO OESTE EIRELI", cnpj: "52.710.001/0001-10", cleanCnpj: "52710001000110", days: 22, uf: "GO", cep: "74003-010", address: "Av. Goiás, Goiânia - GO", segment: "Logística & Transportes", offer: "Móvel Frota + Link Satélite", mrrValue: 2200, stage: 6, ownerId: 'sdr1', fiberViable: true, fiberDist: '90m' }
+        ];
+
+        let currentUser = { id: 'gestor', name: 'Everson Mendes', role: 'GESTOR' };
+        let isCepCoolingDown = false;
+        let chartRegionInst = null;
+        let chartProductInst = null;
+
+        // TOAST SYSTEM
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-300' :
+                            type === 'error' ? 'bg-rose-950/90 border-rose-500/50 text-rose-300' :
+                            'bg-slate-900/90 border-cyanaccent/50 text-cyanaccent';
+            const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-circle-info';
+            
+            toast.className = `flex items-center space-x-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-xl text-xs font-semibold transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bgColor}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
 
         function handleLogin(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
-            showDashboard(email, "Gestor de Rede");
+            showDashboard(email);
         }
 
-        function quickLogin(email, role) {
-            showDashboard(email, role);
+        function quickLogin(email) {
+            showDashboard(email);
         }
 
-        function showDashboard(email, role) {
+        function showDashboard(email) {
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('mainDashboard').classList.remove('hidden');
             document.getElementById('navUserName').innerText = email.split('@')[0].toUpperCase();
-            document.getElementById('navUserRole').innerText = role;
             
-            renderLeadsTable(leadsData);
-            renderKanban(leadsData);
+            renderLeadsTable();
+            renderKanban();
+            renderExecResults();
             generateScript();
-            initCharts();
+            showToast('Sessão iniciada com sucesso!', 'success');
         }
 
         function handleLogout() {
@@ -588,62 +749,72 @@
             });
 
             const activeBtn = document.getElementById(`tabBtn-${tabId}`);
-            activeBtn.className = "tab-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 bg-gradient-to-r from-electricblue to-cyanaccent text-slate-950 shadow-md";
+            if (activeBtn) activeBtn.className = "tab-btn px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 bg-gradient-to-r from-electricblue to-cyanaccent text-slate-950 shadow-md";
+
+            if (tabId === 'analyticsTab') initCharts();
         }
 
+        // CORREÇÃO DO FILTRO POR REGIÃO
         function applyFilters() {
-            const region = document.getElementById('filterRegion').value;
-            const uf = document.getElementById('filterUF').value;
-            const segment = document.getElementById('filterSegment').value;
-            const maxDays = parseInt(document.getElementById('filterDays').value);
-            const keyword = document.getElementById('searchKeyword').value.toLowerCase();
-
-            const filtered = leadsData.filter(item => {
-                const matchRegion = (region === 'ALL' || item.region === region);
-                const matchUf = (uf === 'ALL' || item.uf === uf);
-                const matchSegment = (segment === 'ALL' || item.segment === segment);
-                const matchDays = item.days <= maxDays;
-                const matchKeyword = item.name.toLowerCase().includes(keyword) || item.cnpj.includes(keyword);
-
-                return matchRegion && matchUf && matchSegment && matchDays && matchKeyword;
-            });
-
-            renderLeadsTable(filtered);
-            document.getElementById('filteredCount').innerText = `${filtered.length} de ${leadsData.length}`;
+            renderLeadsTable();
         }
 
-        function renderLeadsTable(items) {
+        function getRegionByUf(uf) {
+            for (const [region, ufs] of Object.entries(regionMap)) {
+                if (ufs.includes(uf)) return region;
+            }
+            return 'Outros';
+        }
+
+        function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             tbody.innerHTML = '';
 
-            if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-500">Nenhum CNPJ encontrado para os filtros selecionados.</td></tr>`;
-                return;
-            }
+            const selectedRegion = document.getElementById('filterRegion')?.value || 'ALL';
+            const selectedUf = document.getElementById('filterUF')?.value || 'ALL';
+            const selectedSegment = document.getElementById('filterSegment')?.value || 'ALL';
+            const maxDays = parseInt(document.getElementById('filterDays')?.value || '30');
+            const keyword = (document.getElementById('searchKeyword')?.value || '').toLowerCase();
 
-            items.forEach(item => {
+            const filtered = mockLeads.filter(item => {
+                const itemRegion = getRegionByUf(item.uf);
+                const matchRegion = (selectedRegion === 'ALL' || itemRegion === selectedRegion);
+                const matchUf = (selectedUf === 'ALL' || item.uf === selectedUf);
+                const matchSegment = (selectedSegment === 'ALL' || item.segment === selectedSegment);
+                const matchDays = item.days <= maxDays;
+                const matchKw = item.name.toLowerCase().includes(keyword) || item.cnpj.includes(keyword);
+
+                return matchRegion && matchUf && matchSegment && matchDays && matchKw;
+            });
+
+            document.getElementById('filteredCount').innerText = `${filtered.length} de ${mockLeads.length}`;
+
+            filtered.forEach(lead => {
+                const sdr = sdrsData.find(s => s.id === lead.ownerId);
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-900/60 cursor-pointer transition-colors";
-                tr.onclick = () => openLeadModal(item);
+                tr.onclick = () => openLeadModal(lead);
 
                 tr.innerHTML = `
                     <td class="p-3.5">
-                        <p class="font-bold text-white">${item.name}</p>
-                        <p class="font-mono text-[10px] text-cyanaccent">${item.cnpj}</p>
+                        <p class="font-bold text-white">${lead.name}</p>
+                        <p class="font-mono text-[10px] text-cyanaccent">${lead.cnpj}</p>
                     </td>
-                    <td class="p-3.5 font-mono text-[11px] text-slate-300">${item.days} dias atrás</td>
+                    <td class="p-3.5 font-mono text-[11px] text-slate-300">${lead.days} dias atrás</td>
                     <td class="p-3.5">
-                        <span class="bg-slate-800 text-slate-200 px-2 py-0.5 rounded font-mono text-[10px]">${item.uf}</span>
-                        <span class="text-slate-400 text-[10px] block">${item.region}</span>
+                        <span class="bg-slate-800 text-slate-200 px-2 py-0.5 rounded font-mono text-[10px]">${lead.uf}</span>
+                        <span class="text-slate-400 text-[10px] block">${getRegionByUf(lead.uf)}</span>
                     </td>
-                    <td class="p-3.5 text-slate-300">${item.segment}</td>
-                    <td class="p-3.5 font-semibold text-cyanaccent">${item.offer}</td>
+                    <td class="p-3.5 text-slate-300">${lead.segment}</td>
+                    <td class="p-3.5 font-semibold text-cyanaccent">${lead.offer}</td>
                     <td class="p-3.5">
-                        <span class="font-bold text-emeraldgreen bg-emeraldgreen/10 px-2 py-0.5 rounded border border-emeraldgreen/20">${item.score}/100</span>
+                        ${lead.fiberViable 
+                            ? `<span class="text-emeraldgreen font-bold text-[10px] bg-emeraldgreen/10 px-2 py-0.5 rounded border border-emeraldgreen/20"><i class="fa-solid fa-check"></i> Viável (${lead.fiberDist})</span>` 
+                            : `<span class="text-amber-400 font-bold text-[10px] bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/20"><i class="fa-solid fa-clock"></i> ${lead.fiberDist}</span>`}
                     </td>
                     <td class="p-3.5 text-center" onclick="event.stopPropagation()">
-                        <button onclick="fetchLeadBrasilApi('${item.cleanCnpj}')" class="bg-slate-800 hover:bg-cyanaccent hover:text-slate-950 text-slate-300 p-1.5 rounded-lg text-[10px] font-bold transition-all" title="Verificar na BrasilAPI">
-                            <i class="fa-solid fa-cloud-arrow-down"></i> API
+                        <button onclick="openLeadModalById(${lead.id})" class="bg-slate-800 hover:bg-cyanaccent hover:text-slate-950 text-slate-300 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all">
+                            <i class="fa-solid fa-eye"></i> Detalhes
                         </button>
                     </td>
                 `;
@@ -651,40 +822,241 @@
             });
         }
 
-        function renderKanban(items) {
+        // DRAG & DROP NO KANBAN
+        function handleDragStart(e, leadId) {
+            e.dataTransfer.setData("text/plain", leadId);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e, targetStage) {
+            e.preventDefault();
+            const leadId = parseInt(e.dataTransfer.getData("text/plain"));
+            const lead = mockLeads.find(l => l.id === leadId);
+
+            if (lead) {
+                lead.stage = targetStage;
+                renderKanban();
+                renderLeadsTable();
+                renderExecResults();
+                showToast(`Lead "${lead.name}" movido para a Etapa ${targetStage}!`, 'success');
+            }
+        }
+
+        function renderKanban() {
             for(let i=1; i<=6; i++) {
-                document.getElementById(`kanban-stage-${i}`).innerHTML = '';
+                const col = document.getElementById(`kanban-stage-${i}`);
+                if (col) col.innerHTML = '';
             }
 
-            items.forEach(item => {
-                const target = document.getElementById(`kanban-stage-${item.stage}`);
-                if(!target) return;
+            const counts = [0, 0, 0, 0, 0, 0];
 
+            mockLeads.forEach(lead => {
+                const stageIdx = lead.stage || 1;
+                counts[stageIdx - 1]++;
+                const col = document.getElementById(`kanban-stage-${stageIdx}`);
+                if (!col) return;
+
+                const sdr = sdrsData.find(s => s.id === lead.ownerId);
                 const card = document.createElement('div');
-                card.className = "bg-slate-900/90 border border-slate-800 p-3 rounded-xl space-y-2 hover:border-cyanaccent/50 transition-all cursor-pointer";
-                card.onclick = () => openLeadModal(item);
+                card.draggable = true;
+                card.ondragstart = (e) => handleDragStart(e, lead.id);
+                card.className = "bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 hover:border-cyanaccent/50 cursor-grab active:cursor-grabbing transition-all shadow-md";
+                card.onclick = () => openLeadModal(lead);
+
                 card.innerHTML = `
-                    <p class="font-bold text-xs text-white truncate">${item.name}</p>
-                    <p class="text-[10px] font-mono text-cyanaccent">${item.cnpj}</p>
-                    <div class="flex items-center justify-between text-[10px]">
-                        <span class="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">${item.uf}</span>
-                        <span class="text-emeraldgreen font-bold">${item.offer.split('+')[0]}</span>
+                    <p class="font-bold text-xs text-white truncate">${lead.name}</p>
+                    <p class="text-[10px] font-mono text-cyanaccent">${lead.cnpj}</p>
+                    <div class="flex items-center justify-between text-[10px] pt-1 border-t border-slate-800/80">
+                        <span class="bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">${lead.uf}</span>
+                        <span class="text-slate-400 font-medium">${sdr ? sdr.name.split(' ')[0] : 'SDR'}</span>
                     </div>
                 `;
-                target.appendChild(card);
+                col.appendChild(card);
             });
+
+            for(let i=1; i<=6; i++) {
+                const badge = document.getElementById(`kb-count-${i}`);
+                if (badge) badge.innerText = counts[i-1];
+            }
+        }
+
+        // RESULTADOS EXECUTIVOS & RANKING
+        function renderExecResults() {
+            const tbody = document.getElementById('sdrRankingTable');
+            const productList = document.getElementById('productBySdrList');
+            if (!tbody || !productList) return;
+
+            tbody.innerHTML = '';
+            productList.innerHTML = '';
+
+            let totalGlobalAchieved = 0;
+
+            const sortedSdrs = [...sdrsData].sort((a, b) => b.achievedMrr - a.achievedMrr);
+
+            sortedSdrs.forEach((sdr, index) => {
+                totalGlobalAchieved += sdr.achievedMrr;
+                const pct = Math.min(100, Math.round((sdr.achievedMrr / sdr.targetMrr) * 100));
+
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white flex items-center gap-2">
+                        <span>${medal}</span>
+                        <span>${sdr.name}</span>
+                    </td>
+                    <td class="p-3 font-mono">R$ ${sdr.targetMrr.toLocaleString('pt-BR')}</td>
+                    <td class="p-3 font-mono text-emeraldgreen font-bold">R$ ${sdr.achievedMrr.toLocaleString('pt-BR')}</td>
+                    <td class="p-3">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-16 bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="bg-cyanaccent h-full" style="width: ${pct}%"></div>
+                            </div>
+                            <span class="text-[11px] font-bold text-cyanaccent">${pct}%</span>
+                        </div>
+                    </td>
+                    <td class="p-3 font-semibold text-slate-300">${sdr.topProduct}</td>
+                `;
+                tbody.appendChild(tr);
+
+                const cardProd = document.createElement('div');
+                cardProd.className = "bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between";
+                cardProd.innerHTML = `
+                    <div>
+                        <p class="font-bold text-xs text-white">${sdr.name}</p>
+                        <p class="text-[10px] text-cyanaccent">${sdr.topProduct}</p>
+                    </div>
+                    <span class="text-xs font-mono font-bold text-emeraldgreen">R$ ${sdr.achievedMrr.toLocaleString('pt-BR')}</span>
+                `;
+                productList.appendChild(cardProd);
+            });
+
+            document.getElementById('globalAchievedMrr').innerText = `R$ ${totalGlobalAchieved.toLocaleString('pt-BR')},00`;
+        }
+
+        // BUSCA DE CEP MANUAL COM RATE-LIMITING (RESPEITO À API)
+        async function searchManualCep() {
+            if (isCepCoolingDown) {
+                showToast('Aguarde 2 segundos para realizar outra consulta de CEP.', 'error');
+                return;
+            }
+
+            const input = document.getElementById('manualCepInput');
+            const cep = input.value.replace(/\D/g, '');
+            if (!cep || cep.length !== 8) {
+                showToast('Digite um CEP válido com 8 dígitos.', 'error');
+                return;
+            }
+
+            // ATIVA COOLDOWN
+            isCepCoolingDown = true;
+            const btn = document.getElementById('btnSearchCep');
+            const badge = document.getElementById('cepCooldownBadge');
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+            badge.classList.remove('hidden');
+
+            try {
+                showToast(`Consultando cobertura de fibra para o CEP ${cep}...`, 'info');
+                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                if (!res.ok) throw new Error('CEP não localizado.');
+                const data = await res.json();
+                if (data.erro) throw new Error('CEP inexistente.');
+
+                showToast(`[ViaCEP] ${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf} | Cobertura GPON OK!`, 'success');
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                setTimeout(() => {
+                    isCepCoolingDown = false;
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50');
+                    badge.classList.add('hidden');
+                }, 2000); // 2 SEGUNDOS DE COOLDOWN
+            }
+        }
+
+        async function checkModalCepViability() {
+            const input = document.getElementById('modalCepInput');
+            const cep = input.value.replace(/\D/g, '');
+            if (!cep || cep.length !== 8) {
+                showToast('Digite um CEP válido de 8 dígitos.', 'error');
+                return;
+            }
+            try {
+                const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await res.json();
+                if (data.erro) throw new Error('CEP não localizado.');
+
+                document.getElementById('modalCep').innerText = cep;
+                document.getElementById('modalEndereco').innerText = `${data.logradouro}, ${data.bairro} - ${data.localidade}/${data.uf}`;
+                document.getElementById('modalViabilidade').innerText = "✅ Viável - Fibra Dedicada a 40m";
+                showToast('Viabilidade revalidada no novo endereço!', 'success');
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        async function lookupDirectCnpj() {
+            const input = document.getElementById('directCnpjInput').value.replace(/\D/g, '');
+            if (!input || input.length !== 14) {
+                showToast('Digite um CNPJ válido com 14 dígitos.', 'error');
+                return;
+            }
+
+            try {
+                showToast('Consultando Receita Federal...', 'info');
+                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${input}`);
+                if (!res.ok) throw new Error('CNPJ não encontrado na Receita Federal.');
+                const data = await res.json();
+
+                const newLead = {
+                    id: Date.now(),
+                    name: data.razao_social,
+                    cnpj: data.cnpj,
+                    cleanCnpj: input,
+                    days: 1,
+                    uf: data.uf,
+                    cep: data.cep || "01310-100",
+                    address: `${data.logradouro || 'Endereço'}, ${data.municipio || ''} - ${data.uf}`,
+                    segment: data.cnae_fiscal_descricao || "Serviços Gerais",
+                    offer: "PABX Cloud + Fibra Dedicada",
+                    mrrValue: 1500,
+                    stage: 1,
+                    ownerId: 'sdr1',
+                    fiberViable: true,
+                    fiberDist: '50m'
+                };
+
+                mockLeads.unshift(newLead);
+                renderLeadsTable();
+                renderKanban();
+                openLeadModal(newLead);
+                showToast(`[BrasilAPI] CNPJ ${data.razao_social} capturado!`, 'success');
+
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        function openLeadModalById(id) {
+            const lead = mockLeads.find(l => l.id === id);
+            if (lead) openLeadModal(lead);
         }
 
         function openLeadModal(lead) {
-            activeLeadModal = lead;
+            const sdr = sdrsData.find(s => s.id === lead.ownerId);
             document.getElementById('modalCompanyName').innerText = lead.name;
             document.getElementById('modalCnpj').innerText = lead.cnpj;
-            document.getElementById('modalAbertura').innerText = `${lead.days} dias atrás`;
-            document.getElementById('modalUfCidade').innerText = `${lead.uf} - (${lead.region})`;
-            document.getElementById('modalRecomendacao').innerText = `Proposta estratégica recomendada: ${lead.offer}. Foco em atendimento prioritário nos primeiros 30 dias.`;
-            document.getElementById('modalWaBtn').href = `https://wa.me/55${lead.phone}?text=Olá,%20falo%20com%20o%20responsável%20da%20${encodeURIComponent(lead.name)}?%20Parabéns%20pela%20abertura%20do%20novo%20CNPJ!`;
-            
-            document.getElementById('modalApiResult').innerText = "Clique no botão acima para puxar os dados mais recentes cadastrados na Receita Federal.";
+            document.getElementById('modalCep').innerText = lead.cep;
+            document.getElementById('modalEndereco').innerText = lead.address;
+            document.getElementById('modalViabilidade').innerText = lead.fiberViable ? `✅ Viável (${lead.fiberDist})` : `⚠️ ${lead.fiberDist}`;
+            document.getElementById('modalSdrOwner').innerText = `SDR Responsável: ${sdr ? sdr.name : 'Sem Atribuição'}`;
+            document.getElementById('modalWaBtn').href = `https://wa.me/5511999999999?text=Olá!%20Falo%20com%20o%20responsável%20da%20${encodeURIComponent(lead.name)}?%20Parabéns%20pelo%20novo%20CNPJ!`;
+
             document.getElementById('leadModal').classList.remove('hidden');
         }
 
@@ -692,87 +1064,16 @@
             document.getElementById('leadModal').classList.add('hidden');
         }
 
-        async function fetchLeadBrasilApi(cleanCnpj) {
-            try {
-                alert(`Consultando BrasilAPI para o CNPJ ${cleanCnpj}...`);
-                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cleanCnpj}`);
-                if (!res.ok) throw new Error('CNPJ não encontrado na base pública.');
-                const data = await res.json();
-
-                alert(`[BrasilAPI - Receita Federal]\n\nRazão Social: ${data.razao_social}\nNome Fantasia: ${data.nome_fantasia || 'N/A'}\nStatus: ${data.descricao_situacao_cadastral}\nCidade/UF: ${data.municipio}/${data.uf}\nCNAE: ${data.cnae_fiscal_descricao}`);
-            } catch (err) {
-                alert(`Erro ao consultar API Gratuita: ${err.message}`);
-            }
-        }
-
-        async function fetchModalCnpjBrasilApi() {
-            if (!activeLeadModal) return;
-            const resBox = document.getElementById('modalApiResult');
-            resBox.innerHTML = `<span class="text-cyanaccent"><i class="fa-solid fa-spinner animate-spin"></i> Consultando Receita Federal via BrasilAPI...</span>`;
-
-            try {
-                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${activeLeadModal.cleanCnpj}`);
-                if (!res.ok) throw new Error('Não foi possível obter dados da BrasilAPI.');
-                const data = await res.json();
-
-                resBox.innerHTML = `
-                    <div class="space-y-1 text-slate-200 mt-2">
-                        <p><strong class="text-cyanaccent">Razão Social:</strong> ${data.razao_social}</p>
-                        <p><strong class="text-cyanaccent">Situação Cadastral:</strong> <span class="text-emeraldgreen font-bold">${data.descricao_situacao_cadastral}</span></p>
-                        <p><strong class="text-cyanaccent">CNAE Principal:</strong> ${data.cnae_fiscal} - ${data.cnae_fiscal_descricao}</p>
-                        <p><strong class="text-cyanaccent">Endereço:</strong> ${data.logradouro}, ${data.numero} - ${data.bairro}, ${data.municipio}/${data.uf}</p>
-                        <p><strong class="text-cyanaccent">Capital Social:</strong> R$ ${data.capital_social ? data.capital_social.toLocaleString('pt-BR') : 'N/A'}</p>
-                    </div>
-                `;
-            } catch (err) {
-                resBox.innerHTML = `<span class="text-rose-400">Erro: ${err.message}</span>`;
-            }
-        }
-
-        async function lookupDirectCnpj() {
-            const input = document.getElementById('directCnpjInput').value.replace(/\D/g, '');
-            if (!input || input.length !== 14) {
-                alert('Por favor, digite um CNPJ válido com 14 dígitos.');
-                return;
-            }
-
-            try {
-                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${input}`);
-                if (!res.ok) throw new Error('CNPJ não encontrado na Receita Federal.');
-                const data = await res.json();
-
-                const dynamicLead = {
-                    id: Date.now(),
-                    name: data.razao_social,
-                    cnpj: data.cnpj,
-                    cleanCnpj: input,
-                    days: 1,
-                    region: data.uf === 'SP' || data.uf === 'RJ' || data.uf === 'MG' || data.uf === 'ES' ? 'Sudeste' : 'Brasil',
-                    uf: data.uf,
-                    segment: data.cnae_fiscal_descricao,
-                    offer: "PABX Cloud + Fibra Dedicada",
-                    score: 99,
-                    phone: data.ddd_telefone_1 || "11999999999",
-                    stage: 1
-                };
-
-                openLeadModal(dynamicLead);
-                fetchModalCnpjBrasilApi();
-
-            } catch (err) {
-                alert(`Erro ao consultar BrasilAPI: ${err.message}`);
-            }
-        }
-
         function generateScript() {
-            const channel = document.getElementById('scriptChannel').value;
+            const channel = document.getElementById('scriptChannel')?.value || 'wa';
             const output = document.getElementById('scriptOutput');
+            if (!output) return;
 
             let text = "";
             if (channel === 'wa') {
-                text = `Olá! Tudo bem?\n\nVi que vocês acabaram de registrar o CNPJ da empresa nesta semana. Parabéns pela inauguração!\n\nSou o especialista de infraestrutura da Everson Tech. Ajudamos empresas recém-abertas no seu setor a implantarem Fibra Dedicada, Telefonia Móvel e PABX Virtual sem burocracia antes da abertura das portas.\n\nPodemos fazer um estudo de viabilidade técnica sem custo hoje?`;
+                text = `Olá! Tudo bem?\n\nVi que registraram o CNPJ da empresa recentemente. Parabéns pela abertura!\n\nSou o especialista de infraestrutura da Everson Tech. Ajudamos empresas a estruturarem Fibra Dedicada, Telefonia Móvel e PABX Virtual antes da inauguração.\n\nPodemos fazer um estudo de viabilidade técnica sem custo no seu CEP hoje?`;
             } else if (channel === 'call') {
-                text = `SDR: "Olá, [Nome do Sócio], tudo bem? Aqui é o especialista da Everson Tech Telecom.\nVi que seu CNPJ foi emitido nos últimos dias e geralmente esse é o momento mais crítico para estruturar a internet corporativa e as linhas do WhatsApp Business.\n\nVocês já fecharam o contrato de telecom ou ainda estão cotando fornecedores para o novo endereço?"`;
+                text = `SDR: "Olá, tudo bem? Aqui é da Everson Tech Telecom.\nNotei a abertura recente do CNPJ e sabemos que a internet e telefone são essenciais desde o primeiro dia.\n\nJá fecharam fornecedor de telecom ou o endereço de instalação da fibra ainda está em cotação?"`;
             } else {
                 text = `Assunto: Implantação de Conectividade e Telefonia - Novo CNPJ\n\nDesejamos sucesso com a nova empresa!\n\nA Everson Tech é especializada em conectar negócios recém-estruturados com Fibra de Alta Disponibilidade, PABX Cloud e Telefonia Móvel Corporativa.\n\nFicamos à disposição para apresentar nosso estudo de viabilidade para sua região.`;
             }
@@ -782,48 +1083,35 @@
         function copyScriptText() {
             const text = document.getElementById('scriptOutput').innerText;
             navigator.clipboard.writeText(text);
-            alert('Script copiado com sucesso!');
+            showToast('Script copiado com sucesso!', 'success');
         }
 
         function initCharts() {
-            const ctxRegion = document.getElementById('regionChart').getContext('2d');
-            new Chart(ctxRegion, {
-                type: 'bar',
-                data: {
-                    labels: ['Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte'],
-                    datasets: [{
-                        label: 'CNPJs Novos (<30d)',
-                        data: [450, 280, 210, 180, 120],
-                        backgroundColor: '#00f0ff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
-                    }
-                }
-            });
+            const ctxR = document.getElementById('regionChart')?.getContext('2d');
+            if (ctxR) {
+                if (chartRegionInst) chartRegionInst.destroy();
+                chartRegionInst = new Chart(ctxR, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Nordeste', 'Sudeste', 'Sul', 'Centro-Oeste', 'Norte'],
+                        datasets: [{ label: 'CNPJs Novos', data: [320, 450, 280, 180, 120], backgroundColor: '#00f0ff' }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
 
-            const ctxProduct = document.getElementById('productChart').getContext('2d');
-            new Chart(ctxProduct, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Fibra Dedicada', 'Móvel Corporativo', 'PABX Cloud / SVA', 'M2M / IoT'],
-                    datasets: [{
-                        data: [40, 30, 20, 10],
-                        backgroundColor: ['#2563eb', '#00f0ff', '#10b981', '#a855f7']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { labels: { color: '#94a3b8' } } }
-                }
-            });
+            const ctxP = document.getElementById('productChart')?.getContext('2d');
+            if (ctxP) {
+                if (chartProductInst) chartProductInst.destroy();
+                chartProductInst = new Chart(ctxP, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Fibra Dedicada', 'Móvel Corporativo', 'PABX Cloud', 'M2M / POS'],
+                        datasets: [{ data: [40, 30, 20, 10], backgroundColor: ['#2563eb', '#00f0ff', '#10b981', '#a855f7'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
         }
     </script>
 </body>
