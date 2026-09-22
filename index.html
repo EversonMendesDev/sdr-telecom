@@ -29,11 +29,10 @@
         }
     </script>
     
-    <!-- Google Fonts & Chart.js -->
+    <!-- Google Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -50,10 +49,9 @@
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen custom-scrollbar antialiased selection:bg-cyanaccent selection:text-slate-900">
 
-    <!-- ==================== TELA DE LOGIN REAL ==================== -->
+    <!-- ==================== TELA DE LOGIN ==================== -->
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-darkbg to-black">
         <div class="w-full max-w-md z-10">
-            <!-- Header Marca -->
             <div class="text-center mb-6">
                 <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-electricblue to-cyanaccent p-0.5 shadow-lg shadow-cyanaccent/20 mb-3">
                     <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
@@ -64,7 +62,6 @@
                 <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Sistema de Prospecção & Gestão SDR</p>
             </div>
 
-            <!-- Formulário de Login -->
             <div class="glass-panel p-8 rounded-2xl shadow-2xl border border-slate-800">
                 <form onsubmit="handleAuthLogin(event)" class="space-y-4">
                     <div>
@@ -88,7 +85,6 @@
                     </button>
                 </form>
 
-                <!-- Credenciais Rápidas de Teste -->
                 <div class="mt-6 pt-5 border-t border-slate-800">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2">Credenciais de Teste Disponíveis</p>
                     <div class="grid grid-cols-2 gap-2 text-[10px]">
@@ -108,8 +104,6 @@
 
     <!-- ==================== DASHBOARD PRINCIPAL ==================== -->
     <div id="mainDashboard" class="hidden min-h-screen flex flex-col bg-darkbg">
-        
-        <!-- Header Principal -->
         <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md px-6 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-4">
                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-electricblue to-cyanaccent p-0.5 flex items-center justify-center">
@@ -135,10 +129,7 @@
             </div>
         </header>
 
-        <!-- Conteúdo Principal -->
         <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
-
-            <!-- Navegação por Abas -->
             <div class="flex items-center space-x-2 border-b border-slate-800 pb-2">
                 <button onclick="switchTab('leadsTab')" id="btn-leadsTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-cyanaccent text-slate-950">
                     <i class="fa-solid fa-database mr-1.5"></i> Base CNPJs & Anticolisão
@@ -146,15 +137,10 @@
                 <button onclick="switchTab('forecastTab')" id="btn-forecastTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
                     <i class="fa-solid fa-chart-line mr-1.5"></i> Dashboard de Metas & Forecast
                 </button>
-                <button onclick="switchTab('kanbanTab')" id="btn-kanbanTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-kanban mr-1.5"></i> Esteira Kanban
-                </button>
             </div>
 
-            <!-- TAB 1: BASE DE LEADS & ANTICOLISÃO -->
+            <!-- TAB 1: LEADS & ANTICOLISÃO -->
             <div id="leadsTab" class="tab-content space-y-4">
-                
-                <!-- Consulta ao Vivo na BrasilAPI -->
                 <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                         <h3 class="text-xs font-bold text-white flex items-center gap-2">
@@ -171,11 +157,10 @@
                     </div>
                 </div>
 
-                <!-- Tabela de Leads -->
                 <div class="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
                     <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider">Mapeamento de CNPJs Novos (&lt;30 dias)</h3>
-                        <span class="text-[11px] text-slate-400">SDRs não podem editar ou entrar em contatos atribuídos a outro colega</span>
+                        <span class="text-[11px] text-slate-400">Bloqueio automático de leads duplicados entre SDRs</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -184,28 +169,25 @@
                                 <tr>
                                     <th class="p-3">CNPJ / Razão Social</th>
                                     <th class="p-3">Abertura</th>
-                                    <th class="p-3">Estado / Região</th>
+                                    <th class="p-3">Estado</th>
                                     <th class="p-3">Segmento</th>
-                                    <th class="p-3">SDR Responsável (Dono)</th>
+                                    <th class="p-3">SDR Responsável</th>
                                     <th class="p-3 text-center">Ação Anticolisão</th>
                                 </tr>
                             </thead>
-                            <tbody id="leadsTableBody" class="divide-y divide-slate-800/60">
-                                <!-- Preenchido dinamicamente via JS -->
-                            </tbody>
+                            <tbody id="leadsTableBody" class="divide-y divide-slate-800/60"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: DASHBOARD DE METAS & FORECAST -->
+            <!-- TAB 2: METAS & FORECAST -->
             <div id="forecastTab" class="tab-content hidden space-y-6">
-                <!-- Visão Executiva das Metas da Equipe -->
                 <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white">Painel Geral de Metas & Previsão de Fechamento (Forecast)</h3>
-                            <p class="text-xs text-slate-400">Meta Padrão: R$ 8.000,00 de MRR / SDR | Previsão ponderada pela taxa de conversão da esteira</p>
+                            <p class="text-xs text-slate-400">Meta Padrão: R$ 8.000,00 de MRR / SDR</p>
                         </div>
                         <span class="bg-emeraldgreen/20 text-emeraldgreen font-mono text-xs px-3 py-1 rounded-full font-bold">Meta Global: R$ 80.000 MRR</span>
                     </div>
@@ -222,27 +204,16 @@
                                     <th class="p-3">Status</th>
                                 </tr>
                             </thead>
-                            <tbody id="sdrGoalsTable" class="divide-y divide-slate-800">
-                                <!-- Preenchido por JS -->
-                            </tbody>
+                            <tbody id="sdrGoalsTable" class="divide-y divide-slate-800"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
-
-            <!-- TAB 3: KANBAN -->
-            <div id="kanbanTab" class="tab-content hidden">
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3" id="kanbanGrid">
-                    <!-- Kanban Columns in JS -->
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <!-- ==================== LOGICA JAVASCRIPT ==================== -->
+    <!-- ==================== LÓGICA JAVASCRIPT CORRIGIDA ==================== -->
     <script>
-        // Base de Dados de Usuários (1 Gestor + 10 SDRs)
         const systemUsers = [
             { id: 'gestor', name: 'Everson Mendes (Gestor)', email: 'gestor@eversontech.com.br', pass: 'gestor123', role: 'GESTOR' },
             { id: 'sdr1', name: 'Carlos Silva (SDR 1)', email: 'sdr1@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
@@ -257,14 +228,11 @@
             { id: 'sdr10', name: 'Fernanda Martins (SDR 10)', email: 'sdr10@eversontech.com.br', pass: 'sdr123', role: 'SDR' }
         ];
 
-        // Base de Leads Simulates com Atribuição
         let mockLeads = [
             { id: 101, name: "ALPHA LOGISTICA LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 3, uf: "SP", segment: "Logística", ownerId: "sdr1", stage: 2, mrrValue: 1200 },
             { id: 102, name: "CLINICA BEM ESTAR SAUDE", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 6, uf: "PR", segment: "Saúde", ownerId: "sdr2", stage: 3, mrrValue: 850 },
             { id: 103, name: "NEXUS TECNOLOGIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 10, uf: "MG", segment: "Serviços", ownerId: null, stage: 1, mrrValue: 2400 },
-            { id: 104, name: "SUPERMERCADO NOVO RUMO", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 12, uf: "BA", segment: "Varejo", ownerId: null, stage: 1, mrrValue: 600 },
-            { id: 105, name: "CONSTRUTORA SUL EIRELI", cnpj: "52.601.778/0001-44", cleanCnpj: "52601778000144", days: 2, uf: "SC", segment: "Construção", ownerId: "sdr1", stage: 5, mrrValue: 3500 },
-            { id: 106, name: "AGRO TRANSPORTES GOIAS", cnpj: "52.710.001/0001-10", cleanCnpj: "52710001000110", days: 18, uf: "GO", segment: "Logística", ownerId: "sdr3", stage: 4, mrrValue: 1800 }
+            { id: 104, name: "SUPERMERCADO NOVO RUMO", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 12, uf: "BA", segment: "Varejo", ownerId: null, stage: 1, mrrValue: 600 }
         ];
 
         let currentUser = null;
@@ -278,7 +246,6 @@
             e.preventDefault();
             const email = document.getElementById('inputEmail').value;
             const pass = document.getElementById('inputPassword').value;
-
             const user = systemUsers.find(u => u.email === email && u.pass === pass);
 
             if (user) {
@@ -287,7 +254,6 @@
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 document.getElementById('navUserName').innerText = user.name;
                 document.getElementById('navUserRole').innerText = user.role === 'GESTOR' ? 'Gestor de Rede' : 'SDR Operacional';
-
                 renderLeadsTable();
                 renderGoalsAndForecast();
             } else {
@@ -306,7 +272,6 @@
             document.getElementById(tabId).classList.remove('hidden');
         }
 
-        // Render da Tabela com Trava Anticolisão
         function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             tbody.innerHTML = '';
@@ -318,13 +283,12 @@
                 const isManager = currentUser.role === 'GESTOR';
 
                 let actionHtml = '';
-
                 if (isUnassigned) {
                     actionHtml = `<button onclick="claimLead(${lead.id})" class="bg-emeraldgreen text-slate-950 font-bold px-3 py-1 rounded text-[10px]">Assumir Lead</button>`;
                 } else if (isOwner) {
                     actionHtml = `<span class="text-cyanaccent font-bold"><i class="fa-solid fa-check"></i> Seu Lead</span>`;
                 } else {
-                    actionHtml = `<span class="text-slate-500 font-medium" title="Atendido por outro SDR"><i class="fa-solid fa-lock text-rose-400"></i> ${owner ? owner.name.split(' ')[0] : 'Ocupado'}</span>`;
+                    actionHtml = `<span class="text-slate-500 font-medium"><i class="fa-solid fa-lock text-rose-400"></i> ${owner ? owner.name.split(' ')[0] : 'Ocupado'}</span>`;
                     if (isManager) {
                         actionHtml += ` <button onclick="releaseLead(${lead.id})" class="text-[9px] bg-slate-800 text-rose-400 px-1.5 py-0.5 rounded ml-1">Liberar</button>`;
                     }
@@ -333,10 +297,7 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-900/60";
                 tr.innerHTML = `
-                    <td class="p-3">
-                        <p class="font-bold text-white">${lead.name}</p>
-                        <p class="font-mono text-[10px] text-cyanaccent">${lead.cnpj}</p>
-                    </td>
+                    <td class="p-3"><p class="font-bold text-white">${lead.name}</p><p class="font-mono text-[10px] text-cyanaccent">${lead.cnpj}</p></td>
                     <td class="p-3 font-mono text-[10px]">${lead.days} dias atrás</td>
                     <td class="p-3">${lead.uf}</td>
                     <td class="p-3">${lead.segment}</td>
@@ -365,26 +326,16 @@
             }
         }
 
-        // Cálculo de Metas e Previsão de Fechamento (Forecast)
         function renderGoalsAndForecast() {
             const tbody = document.getElementById('sdrGoalsTable');
             tbody.innerHTML = '';
-
             const sdrs = systemUsers.filter(u => u.role === 'SDR');
 
             sdrs.forEach(sdr => {
                 const targetMRR = 8000;
                 const sdrLeads = mockLeads.filter(l => l.ownerId === sdr.id);
-
-                // Cálculo do Realizado (Stage 6 = SQL / Fechado)
                 const realizado = sdrLeads.filter(l => l.stage === 6).reduce((acc, curr) => acc + curr.mrrValue, 0);
-
-                // Cálculo do Forecast Ponderado pelas etapas do funil
-                const forecast = sdrLeads.reduce((acc, curr) => {
-                    const weight = curr.stage === 1 ? 0.1 : curr.stage === 2 ? 0.2 : curr.stage === 3 ? 0.4 : curr.stage === 4 ? 0.6 : curr.stage === 5 ? 0.8 : 1.0;
-                    return acc + (curr.mrrValue * weight);
-                }, 0);
-
+                const forecast = sdrLeads.reduce((acc, curr) => acc + (curr.mrrValue * 0.5), 0);
                 const percent = Math.min(100, Math.round((realizado / targetMRR) * 100));
 
                 const tr = document.createElement('tr');
@@ -393,29 +344,27 @@
                     <td class="p-3 font-mono">R$ ${targetMRR.toLocaleString('pt-BR')}</td>
                     <td class="p-3 font-mono text-emeraldgreen font-bold">R$ ${realizado.toLocaleString('pt-BR')}</td>
                     <td class="p-3 font-mono text-cyanaccent">R$ ${Math.round(forecast).toLocaleString('pt-BR')}</td>
-                    <td class="p-3">
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div class="bg-cyanaccent h-full" style="width: ${percent}%"></div>
-                        </div>
-                        <span class="text-[10px] text-slate-400 mt-1 block">${percent}%</span>
-                    </td>
+                    <td class="p-3"><span class="text-xs font-bold text-cyanaccent">${percent}%</span></td>
                     <td class="p-3 font-semibold">${percent >= 100 ? '🔥 Meta Batida' : 'Em Andamento'}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
+        // FUNÇÃO CONSULTA BRASILAPI (100% CORRIGIDA)
         async function searchBrasilApiLive() {
-            const val = document.getElementById('liveCnpjInput').value.replace(/\D/g, '');
+            const input = document.getElementById('liveCnpjInput');
+            if (!input) return;
+            const val = input.value.replace(/\D/g, '');
             if (!val || val.length !== 14) {
-                alert('Digite um CNPJ válido com 14 dígitos.');
+                alert('Por favor, digite um CNPJ válido com 14 dígitos.');
                 return;
             }
             try {
                 const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${val}`);
-                if (!res.ok) throw new Error('CNPJ não encontrado.');
+                if (!res.ok) throw new Error('CNPJ não encontrado na Receita Federal.');
                 const data = await res.json();
-                alert(`[BrasilAPI]\n\nEmpresa: ${data.razao_social}\nSituação: ${data.descricao_situacao_cadastral}\nUF: ${data.uf}`);
+                alert(`[BrasilAPI - Receita Federal]\n\nEmpresa: ${data.razao_social}\nSituação: ${data.descricao_situacao_cadastral}\nUF: ${data.uf}\nCNAE: ${data.cnae_fiscal_descricao}`);
             } catch (e) {
                 alert(e.message);
             }
