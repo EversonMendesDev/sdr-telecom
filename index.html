@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everson Tech - Login & SDR Telecom System</title>
-
+    <title>Everson Tech - SDR & Gestão Telecom</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -28,1752 +28,397 @@
             }
         }
     </script>
-
-    <!-- Google Fonts -->
+    
+    <!-- Google Fonts & Chart.js -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-    <!-- Chart.js -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body {
-            background-color: #070a11;
-            color: #f8fafc;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow-x: hidden;
-        }
-
-        /* Glassmorphism Cards */
-        .glass-card {
-            background: rgba(15, 23, 42, 0.75);
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(30, 41, 59, 0.8);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .glass-card:hover {
-            border-color: rgba(0, 240, 255, 0.3);
-            box-shadow: 0 8px 24px -6px rgba(0, 240, 255, 0.1);
-        }
-
-        .glow-cyan {
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
-        }
-
-        .glow-blue {
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.25);
-        }
-
-        .glow-emerald {
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
-        }
-
-        /* Custom Scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #070a11;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e293b;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00f0ff;
-        }
-
-        .tab-btn.active {
-            color: #00f0ff;
-            border-bottom: 2px solid #00f0ff;
-            background: rgba(0, 240, 255, 0.05);
-        }
-
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.15); }
-        }
-        .pulse-glow {
-            animation: pulseGlow 2s infinite ease-in-out;
-        }
-
-        .kanban-col {
-            min-height: 520px;
-        }
-
-        /* Background Animated Glow for Login */
-        .tech-bg-grid {
-            background-image: radial-gradient(rgba(0, 240, 255, 0.08) 1px, transparent 0);
-            background-size: 32px 32px;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #070a11; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased bg-darkbg text-slate-100">
+<body class="bg-darkbg text-slate-100 min-h-screen custom-scrollbar antialiased selection:bg-cyanaccent selection:text-slate-900">
 
-    <!-- LOGIN SCREEN OVERLAY -->
-    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-darkbg tech-bg-grid transition-all duration-500">
-        <!-- Ambient Light Flares -->
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-600/15 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div class="w-full max-w-md glass-card rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-2xl relative z-10 space-y-6">
-            
-            <!-- Brand Header -->
-            <div class="text-center space-y-2">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-700 via-blue-600 to-cyan-400 text-white font-extrabold text-2xl shadow-lg glow-cyan mb-2">
-                    <span>E</span>
-                </div>
-                <h1 class="text-2xl font-extrabold tracking-tight text-white">
-                    EVERSON <span class="text-cyanaccent">TECH</span>
-                </h1>
-                <p class="text-xs text-slate-400 font-medium">Intelligent Telecom Systems & SDR Prospecção</p>
-            </div>
-
-            <!-- Login Form -->
-            <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
-                <div>
-                    <label class="block text-slate-300 font-semibold mb-1.5">E-mail Corporativo</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                        <input type="email" id="login-email" required placeholder="seu.nome@eversontech.com.br" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-9 pr-3.5 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyanaccent transition-all">
+    <!-- ==================== TELA DE LOGIN REAL ==================== -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-darkbg to-black">
+        <div class="w-full max-w-md z-10">
+            <!-- Header Marca -->
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-electricblue to-cyanaccent p-0.5 shadow-lg shadow-cyanaccent/20 mb-3">
+                    <div class="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-2xl text-cyanaccent"></i>
                     </div>
                 </div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">EVERSON<span class="text-cyanaccent">TECH</span></h1>
+                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Sistema de Prospecção & Gestão SDR</p>
+            </div>
 
-                <div>
-                    <label class="block text-slate-300 font-semibold mb-1.5">Senha de Acesso</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500"></i>
-                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl pl-9 pr-10 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyanaccent transition-all">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
-                            <i id="toggle-pwd-icon" class="fa-solid fa-eye"></i>
+            <!-- Formulário de Login -->
+            <div class="glass-panel p-8 rounded-2xl shadow-2xl border border-slate-800">
+                <form onsubmit="handleAuthLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">E-mail de Acesso</label>
+                        <input type="email" id="inputEmail" required placeholder="ex: sdr1@eversontech.com.br ou gestor@..."
+                            class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyanaccent">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Senha Corporativa</label>
+                        <input type="password" id="inputPassword" required placeholder="••••••••"
+                            class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyanaccent">
+                    </div>
+
+                    <div id="loginError" class="hidden text-xs text-rose-400 bg-rose-950/40 p-2.5 rounded-lg border border-rose-800/50 text-center font-medium">
+                        Credenciais inválidas! Tente novamente.
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-electricblue to-cyanaccent text-slate-950 font-bold py-3 px-4 rounded-xl shadow-lg transition-all text-xs uppercase tracking-wider">
+                        Entrar na Plataforma
+                    </button>
+                </form>
+
+                <!-- Credenciais Rápidas de Teste -->
+                <div class="mt-6 pt-5 border-t border-slate-800">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2">Credenciais de Teste Disponíveis</p>
+                    <div class="grid grid-cols-2 gap-2 text-[10px]">
+                        <button onclick="fillLogin('gestor@eversontech.com.br', 'gestor123')" class="bg-slate-900 hover:bg-slate-800 p-2 rounded-lg text-left border border-slate-800">
+                            <span class="font-bold text-cyanaccent block">Gestor de Rede</span>
+                            <span class="text-slate-400">gestor123</span>
+                        </button>
+                        <button onclick="fillLogin('sdr1@eversontech.com.br', 'sdr123')" class="bg-slate-900 hover:bg-slate-800 p-2 rounded-lg text-left border border-slate-800">
+                            <span class="font-bold text-emeraldgreen block">SDR 1 (Carlos)</span>
+                            <span class="text-slate-400">sdr123</span>
                         </button>
                     </div>
                 </div>
-
-                <div class="flex items-center justify-between text-[11px]">
-                    <label class="flex items-center gap-2 cursor-pointer text-slate-400 hover:text-slate-200">
-                        <input type="checkbox" id="remember-me" class="rounded bg-slate-900 border-slate-700 text-cyanaccent focus:ring-0">
-                        <span>Lembrar minhas credenciais</span>
-                    </label>
-                    <a href="javascript:void(0)" onclick="showToast('Entre em contato com o suporte de TI para redefinir sua senha.', 'info')" class="text-cyanaccent hover:underline">Esqueceu a senha?</a>
-                </div>
-
-                <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 via-cyan-500 to-cyan-400 hover:from-blue-500 hover:to-cyan-300 text-slate-950 font-extrabold rounded-xl text-xs transition-all shadow-lg shadow-cyan-950/50 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Entrar no Sistema</span>
-                </button>
-            </form>
-
-            <!-- 1-CLICK QUICK ACCESS TEST USERS -->
-            <div class="pt-4 border-t border-slate-800 space-y-2.5">
-                <p class="text-[11px] font-semibold text-slate-400 text-center uppercase tracking-wider">Acesso Rápido com 1 Clique (Usuários Teste)</p>
-                <div class="grid grid-cols-1 gap-2">
-                    
-                    <button onclick="quickLogin('gestor@eversontech.com.br', 'Gestor123!')" class="w-full p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-cyan-500/50 rounded-xl flex items-center justify-between text-left transition-all group">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-lg bg-blue-950 border border-blue-700 text-cyanaccent flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-user-shield"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-white text-xs group-hover:text-cyanaccent">Gestor de Rede</div>
-                                <div class="text-[10px] text-slate-400 font-mono">gestor@eversontech.com.br</div>
-                            </div>
-                        </div>
-                        <span class="text-[10px] font-bold text-cyan-400 bg-cyan-950 px-2 py-0.5 rounded border border-cyan-800">Acesso Total</span>
-                    </button>
-
-                    <button onclick="quickLogin('sdr.silva@eversontech.com.br', 'Sdr123!')" class="w-full p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-emerald-500/50 rounded-xl flex items-center justify-between text-left transition-all group">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-lg bg-emerald-950 border border-emerald-700 text-emerald-400 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-headset"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-white text-xs group-hover:text-emerald-400">SDR Operacional</div>
-                                <div class="text-[10px] text-slate-400 font-mono">sdr.silva@eversontech.com.br</div>
-                            </div>
-                        </div>
-                        <span class="text-[10px] font-bold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">Cadência & WA</span>
-                    </button>
-
-                    <button onclick="quickLogin('vendas@eversontech.com.br', 'Vendas123!')" class="w-full p-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-amber-500/50 rounded-xl flex items-center justify-between text-left transition-all group">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-7 h-7 rounded-lg bg-amber-950 border border-amber-700 text-amber-400 flex items-center justify-center text-xs">
-                                <i class="fa-solid fa-briefcase"></i>
-                            </div>
-                            <div>
-                                <div class="font-bold text-white text-xs group-hover:text-amber-400">Executivo de Vendas (Closer)</div>
-                                <div class="text-[10px] text-slate-400 font-mono">vendas@eversontech.com.br</div>
-                            </div>
-                        </div>
-                        <span class="text-[10px] font-bold text-amber-400 bg-amber-950 px-2 py-0.5 rounded border border-amber-800">SQLs & Vendas</span>
-                    </button>
-
-                </div>
             </div>
-
-            <div class="text-center text-[10px] text-slate-500">
-                Everson Tech © 2026 • Plataforma Protegida com Criptografia SSL
-            </div>
-
         </div>
     </div>
 
-    <!-- MAIN APP DASHBOARD (Hidden until authenticated) -->
-    <div id="app-dashboard" class="hidden min-h-screen flex flex-col">
+    <!-- ==================== DASHBOARD PRINCIPAL ==================== -->
+    <div id="mainDashboard" class="hidden min-h-screen flex flex-col bg-darkbg">
         
-        <!-- TOP HEADER -->
-        <header class="sticky top-0 z-40 bg-[#070a11]/90 backdrop-blur-md border-b border-slate-800/80 px-4 lg:px-8 py-3.5">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-                
-                <!-- Logo & Title -->
-                <div class="flex items-center gap-3.5">
-                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-cyan-400 text-white font-extrabold text-xl shadow-lg glow-cyan">
-                        <span>E</span>
-                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
-                            <span class="pulse-glow absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-300"></span>
-                        </span>
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="text-xl font-extrabold tracking-tight text-white flex items-center gap-1.5">
-                                EVERSON <span class="text-cyanaccent">TECH</span>
-                            </h1>
-                            <span class="px-2 py-0.5 text-[10px] font-bold tracking-widest uppercase rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800/60">
-                                PROSPECTING v2.4
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-400 flex items-center gap-2">
-                            <i class="fa-solid fa-satellite-dish text-cyanaccent text-[10px]"></i>
-                            <span>CNPJ Intelligence & SDR Telecom Pipeline</span>
-                        </p>
+        <!-- Header Principal -->
+        <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md px-6 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-electricblue to-cyanaccent p-0.5 flex items-center justify-center">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <i class="fa-solid fa-bolt text-cyanaccent text-sm"></i>
                     </div>
                 </div>
-
-                <!-- Header Actions & Logged User Badge -->
-                <div class="flex items-center gap-3 flex-wrap">
-                    
-                    <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-900/90 border border-slate-800 text-xs text-slate-300">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-glow"></span>
-                        <span>Base Receita: <strong class="text-white">Atualizada Hoje</strong></span>
-                    </div>
-
-                    <button onclick="openAddLeadModal()" class="px-3 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold text-xs transition-all flex items-center gap-2 shadow-md shadow-blue-900/20">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Simular CNPJ</span>
-                    </button>
-
-                    <button onclick="exportDataCSV()" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all flex items-center gap-1.5">
-                        <i class="fa-solid fa-file-csv text-cyanaccent"></i>
-                        <span class="hidden md:inline">CSV</span>
-                    </button>
-
-                    <!-- LOGGED USER PROFILE BADGE -->
-                    <div class="flex items-center gap-2.5 pl-3 border-l border-slate-800">
-                        <img id="user-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="w-9 h-9 rounded-xl object-cover border border-cyan-500/50">
-                        <div class="hidden sm:block text-left">
-                            <div id="user-name" class="text-xs font-bold text-white">Everson Santos</div>
-                            <div id="user-role-badge" class="text-[10px] font-semibold text-cyanaccent">Gestor de Rede</div>
-                        </div>
-                        <button onclick="handleLogout()" title="Sair do Sistema" class="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-all ml-1">
-                            <i class="fa-solid fa-right-from-bracket text-sm"></i>
-                        </button>
-                    </div>
-
+                <div>
+                    <h1 class="font-black text-base text-white tracking-tight">EVERSON<span class="text-cyanaccent">TECH</span></h1>
+                    <span class="text-[10px] font-bold text-slate-400 block -mt-1">SDR TELECOM & FORECAST</span>
                 </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="text-right border-r border-slate-800 pr-4">
+                    <p id="navUserName" class="text-xs font-bold text-slate-200">Nome Usuário</p>
+                    <p id="navUserRole" class="text-[10px] font-semibold text-cyanaccent">Cargo</p>
+                </div>
+
+                <button onclick="logout()" class="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-rose-400 border border-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Sair
+                </button>
             </div>
         </header>
 
-        <!-- MAIN CONTAINER -->
-        <main class="flex-grow max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 space-y-6">
+        <!-- Conteúdo Principal -->
+        <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
 
-            <!-- ROLE BANNER NOTIFICATION -->
-            <div id="role-welcome-banner" class="p-3.5 rounded-2xl bg-gradient-to-r from-blue-950/80 via-slate-900 to-slate-950 border border-blue-900/60 text-xs text-slate-300 flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div id="role-icon-box" class="w-8 h-8 rounded-xl bg-blue-900/60 text-cyanaccent flex items-center justify-center text-sm font-bold">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
-                    <div>
-                        <strong id="role-banner-title" class="text-white font-bold block">Sessão Ativa: Gestor de Rede</strong>
-                        <span id="role-banner-desc" class="text-slate-400 text-[11px]">Acesso completo aos indicadores territoriais, gestão da equipe SDR e viabilidade de Fibra em todo o Brasil.</span>
-                    </div>
-                </div>
-                <span class="hidden md:inline-block text-[10px] font-mono font-bold text-cyanaccent bg-cyan-950 px-2.5 py-1 rounded-full border border-cyan-800/60">
-                    Sessão Protegida
-                </span>
-            </div>
-
-            <!-- EXECUTIVE METRICS OVERVIEW CARDS -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                <!-- Metric 1: Novos CNPJs -->
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 opacity-10 text-cyanaccent">
-                        <i class="fa-solid fa-building-circle-check text-7xl"></i>
-                    </div>
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
-                        <span>CNPJs Novos (&lt;30 dias)</span>
-                        <span class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded text-[11px]">
-                            <i class="fa-solid fa-arrow-trend-up mr-1"></i>+100%
-                        </span>
-                    </div>
-                    <div class="mt-2 flex items-baseline gap-2">
-                        <span id="kpi-total-cnpjs" class="text-3xl font-extrabold text-white tracking-tight">14</span>
-                        <span class="text-xs text-slate-400">empresas ativas</span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Capturadas neste mês</span>
-                        <span class="text-cyanaccent font-mono">Brasil Inteiro</span>
-                    </div>
-                </div>
-
-                <!-- Metric 2: Leads em Cadência -->
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 opacity-10 text-blue-500">
-                        <i class="fa-solid fa-paper-plane text-7xl"></i>
-                    </div>
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
-                        <span>Em Cadência Ativa (SDR)</span>
-                        <span class="text-blue-400 font-bold bg-blue-950/60 px-2 py-0.5 rounded text-[11px]">
-                            Em Andamento
-                        </span>
-                    </div>
-                    <div class="mt-2 flex items-baseline gap-2">
-                        <span id="kpi-cadence-active" class="text-3xl font-extrabold text-white tracking-tight">11</span>
-                        <span class="text-xs text-slate-400">contatos em rotina</span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Toque médio no dia</span>
-                        <span class="text-blue-400 font-mono">Dia 1 a Dia 8</span>
-                    </div>
-                </div>
-
-                <!-- Metric 3: SQLs e Reuniões -->
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 opacity-10 text-emerald-500">
-                        <i class="fa-solid fa-handshake text-7xl"></i>
-                    </div>
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
-                        <span>SQLs / Reuniões Agendadas</span>
-                        <span class="text-emerald-400 font-bold bg-emerald-950/60 px-2 py-0.5 rounded text-[11px]">
-                            21.4% Conv.
-                        </span>
-                    </div>
-                    <div class="mt-2 flex items-baseline gap-2">
-                        <span id="kpi-sqls" class="text-3xl font-extrabold text-white tracking-tight">3</span>
-                        <span class="text-xs text-slate-400">oportunidades quentes</span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Prontas p/ Fechamento</span>
-                        <span class="text-emerald-400 font-mono">Alta Afinidade</span>
-                    </div>
-                </div>
-
-                <!-- Metric 4: Pipeline MRR Estimado -->
-                <div class="glass-card rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute -right-4 -bottom-4 opacity-10 text-amber-500">
-                        <i class="fa-solid fa-coins text-7xl"></i>
-                    </div>
-                    <div class="flex items-center justify-between text-slate-400 text-xs font-medium">
-                        <span>Pipeline MRR Telecom</span>
-                        <span class="text-amber-400 font-bold bg-amber-950/60 px-2 py-0.5 rounded text-[11px]">
-                            Potencial Mensal
-                        </span>
-                    </div>
-                    <div class="mt-2 flex items-baseline gap-1">
-                        <span class="text-sm text-slate-400">R$</span>
-                        <span id="kpi-mrr" class="text-3xl font-extrabold text-white tracking-tight">18.450</span>
-                        <span class="text-xs text-slate-400">/mês</span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span>Fibra + Móvel + SVA</span>
-                        <span class="text-amber-400 font-mono">Ticket Médio R$ 1.310</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FILTER BAR SECTION -->
-            <section class="glass-card rounded-2xl p-4 space-y-3 border border-slate-800">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-800/80">
-                    <div class="flex items-center gap-2 text-sm font-bold text-white">
-                        <i class="fa-solid fa-filter text-cyanaccent"></i>
-                        <span>Filtros Inteligentes da Base de Dados</span>
-                        <span id="filtered-count-badge" class="ml-2 text-xs font-normal text-cyan-300 bg-cyan-950 px-2.5 py-0.5 rounded-full border border-cyan-800">
-                            Mostrando 14 empresas
-                        </span>
-                    </div>
-
-                    <!-- Global Search Box -->
-                    <div class="relative flex-1 lg:max-w-md">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
-                        <input type="text" id="global-search" oninput="applyFilters()" placeholder="Buscar por Razão Social, CNPJ, Cidade, Sócio..." class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyanaccent transition-all">
-                    </div>
-                </div>
-
-                <!-- Filter Controls Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-xs">
-                    
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Região do País</label>
-                        <select id="filter-region" onchange="onRegionChange()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="ALL">Todas as Regiões</option>
-                            <option value="Sudeste">Sudeste</option>
-                            <option value="Sul">Sul</option>
-                            <option value="Centro-Oeste">Centro-Oeste</option>
-                            <option value="Nordeste">Nordeste</option>
-                            <option value="Norte">Norte</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Estado (UF)</label>
-                        <select id="filter-uf" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="ALL">Todos os Estados</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Segmento / Setor</label>
-                        <select id="filter-segment" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="ALL">Todos os Segmentos</option>
-                            <option value="Comércio & Varejo">Comércio & Varejo</option>
-                            <option value="Serviços Profissionais">Serviços Profissionais</option>
-                            <option value="Saúde & Clínicas">Saúde & Clínicas</option>
-                            <option value="Logística & Transporte">Logística & Transporte</option>
-                            <option value="Construção Civil">Construção Civil</option>
-                            <option value="Agronegócio">Agronegócio</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Abertura do CNPJ</label>
-                        <select id="filter-days" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="30">Últimos 30 Dias</option>
-                            <option value="15">Últimos 15 Dias</option>
-                            <option value="7">Últimos 7 Dias</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[11px] font-semibold text-slate-400 mb-1">Produto Prioritário</label>
-                        <select id="filter-product" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="ALL">Todas Soluções</option>
-                            <option value="Fibra Dedicada">Fibra Dedicada</option>
-                            <option value="Móvel Corporativo">Móvel Corporativo</option>
-                            <option value="PABX Cloud">PABX Cloud</option>
-                            <option value="M2M / IoT">M2M / IoT (Maquininhas/Frota)</option>
-                        </select>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB NAVIGATION -->
-            <div class="border-b border-slate-800 flex flex-nowrap overflow-x-auto gap-2 text-xs font-semibold scrollbar-none">
-                <button onclick="switchTab('tab-leads')" id="btn-tab-leads" class="tab-btn active px-4 py-3 rounded-t-xl transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-list-check"></i>
-                    <span>Base de Leads (<30 dias)</span>
+            <!-- Navegação por Abas -->
+            <div class="flex items-center space-x-2 border-b border-slate-800 pb-2">
+                <button onclick="switchTab('leadsTab')" id="btn-leadsTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-cyanaccent text-slate-950">
+                    <i class="fa-solid fa-database mr-1.5"></i> Base CNPJs & Anticolisão
                 </button>
-                <button onclick="switchTab('tab-kanban')" id="btn-tab-kanban" class="tab-btn px-4 py-3 rounded-t-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-kanban"></i>
-                    <span>Kanban da Cadência (SDR)</span>
+                <button onclick="switchTab('forecastTab')" id="btn-forecastTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-chart-line mr-1.5"></i> Dashboard de Metas & Forecast
                 </button>
-                <button onclick="switchTab('tab-playbook')" id="btn-tab-playbook" class="tab-btn px-4 py-3 rounded-t-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-comment-dots"></i>
-                    <span>Gerador de Scripts & Playbook</span>
-                </button>
-                <button onclick="switchTab('tab-analytics')" id="btn-tab-analytics" class="tab-btn px-4 py-3 rounded-t-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Dashboard Analytics & Rede</span>
+                <button onclick="switchTab('kanbanTab')" id="btn-kanbanTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-kanban mr-1.5"></i> Esteira Kanban
                 </button>
             </div>
 
-            <!-- TAB 1: BASE DE LEADS -->
-            <section id="tab-leads" class="space-y-4">
+            <!-- TAB 1: BASE DE LEADS & ANTICOLISÃO -->
+            <div id="leadsTab" class="tab-content space-y-4">
                 
-                <div class="flex items-center justify-between text-xs text-slate-400">
-                    <span>Clique em qualquer CNPJ para abrir o estudo de viabilidade e gerador de script individual.</span>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[11px]">Modo de Exibição:</span>
-                        <button onclick="toggleViewMode('table')" id="view-table-btn" class="p-1.5 rounded bg-slate-800 text-cyanaccent border border-slate-700">
-                            <i class="fa-solid fa-table-list"></i>
-                        </button>
-                        <button onclick="toggleViewMode('cards')" id="view-cards-btn" class="p-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
-                            <i class="fa-solid fa-border-all"></i>
+                <!-- Consulta ao Vivo na BrasilAPI -->
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-down text-cyanaccent"></i>
+                            Puxar CNPJ ao Vivo na Receita Federal (BrasilAPI Grátis)
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Valide dados de qualquer empresa aberta no Brasil sem custo.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 w-full md:w-auto">
+                        <input type="text" id="liveCnpjInput" placeholder="Digite o CNPJ..." class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white">
+                        <button onclick="searchBrasilApiLive()" class="bg-cyanaccent hover:opacity-90 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">
+                            Consultar
                         </button>
                     </div>
                 </div>
 
-                <!-- TABLE VIEW -->
-                <div id="leads-table-container" class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+                <!-- Tabela de Leads -->
+                <div class="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
+                    <div class="p-4 border-b border-slate-800 flex items-center justify-between">
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Mapeamento de CNPJs Novos (&lt;30 dias)</h3>
+                        <span class="text-[11px] text-slate-400">SDRs não podem editar ou entrar em contatos atribuídos a outro colega</span>
+                    </div>
+
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900/90 text-slate-400 uppercase font-bold text-[10px] tracking-wider border-b border-slate-800">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
                                 <tr>
-                                    <th class="p-3.5">Empresa / CNPJ</th>
-                                    <th class="p-3.5">Região / Cidade</th>
-                                    <th class="p-3.5">CNAE / Segmento</th>
-                                    <th class="p-3.5">Abertura</th>
-                                    <th class="p-3.5">Sócio / Contato</th>
-                                    <th class="p-3.5 text-center">Score</th>
-                                    <th class="p-3.5">Estágio Cadência</th>
-                                    <th class="p-3.5 text-right">Ações Rápidas</th>
+                                    <th class="p-3">CNPJ / Razão Social</th>
+                                    <th class="p-3">Abertura</th>
+                                    <th class="p-3">Estado / Região</th>
+                                    <th class="p-3">Segmento</th>
+                                    <th class="p-3">SDR Responsável (Dono)</th>
+                                    <th class="p-3 text-center">Ação Anticolisão</th>
                                 </tr>
                             </thead>
-                            <tbody id="leads-table-body" class="divide-y divide-slate-800/60 text-slate-200">
-                                <!-- JS Inject -->
+                            <tbody id="leadsTableBody" class="divide-y divide-slate-800/60">
+                                <!-- Preenchido dinamicamente via JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                <!-- GRID/CARD VIEW -->
-                <div id="leads-grid-container" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- JS Inject -->
-                </div>
-            </section>
-
-            <!-- TAB 2: KANBAN DE CADÊNCIA -->
-            <section id="tab-kanban" class="hidden space-y-4">
-                <div class="p-3 rounded-xl bg-blue-950/40 border border-blue-900/60 text-xs text-blue-200 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-cyanaccent"></i>
-                    <span>Acompanhe o avanço dos CNPJs novos pelos 6 estágios da cadência de prospecção. Altere a fase do lead clicando no menu do card.</span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 overflow-x-auto pb-4">
-                    
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-blue-500">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                                <i class="fa-brands fa-whatsapp text-emerald-400"></i> Dia 1: WA / Email
-                            </span>
-                            <span id="kanban-count-d1" class="text-[10px] font-bold bg-slate-800 text-cyanaccent px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-d1" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-cyan-500">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-phone text-cyan-400"></i> Dia 2: Cold Call
-                            </span>
-                            <span id="kanban-count-d2" class="text-[10px] font-bold bg-slate-800 text-cyanaccent px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-d2" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-indigo-500">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-lightbulb text-indigo-400"></i> Dia 4: Valor SVA
-                            </span>
-                            <span id="kanban-count-d4" class="text-[10px] font-bold bg-slate-800 text-cyanaccent px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-d4" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-purple-500">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-tower-cell text-purple-400"></i> Dia 6: Viabilidade
-                            </span>
-                            <span id="kanban-count-d6" class="text-[10px] font-bold bg-slate-800 text-cyanaccent px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-d6" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-amber-500">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-                                <i class="fa-solid fa-file-signature text-amber-400"></i> Dia 8: Proposta
-                            </span>
-                            <span id="kanban-count-d8" class="text-[10px] font-bold bg-slate-800 text-cyanaccent px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-d8" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                    <div class="glass-card rounded-xl p-3 flex flex-col justify-between kanban-col border-t-2 border-emerald-500 bg-emerald-950/10">
-                        <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2">
-                            <span class="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
-                                <i class="fa-solid fa-trophy"></i> SQL / Agendado
-                            </span>
-                            <span id="kanban-count-sql" class="text-[10px] font-bold bg-emerald-900 text-emerald-200 px-1.5 py-0.5 rounded">0</span>
-                        </div>
-                        <div id="kanban-stage-sql" class="flex-grow space-y-2.5 overflow-y-auto max-h-[550px] pr-1"></div>
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- TAB 3: GERADOR DE SCRIPTS & PLAYBOOK -->
-            <section id="tab-playbook" class="hidden space-y-6">
-                
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <div class="glass-card rounded-2xl p-5 space-y-4 border border-slate-800 lg:col-span-1">
-                        <div>
-                            <h3 class="text-base font-extrabold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-wand-magic-sparkles text-cyanaccent"></i>
-                                <span>Gerador Customizado de Script</span>
-                            </h3>
-                            <p class="text-xs text-slate-400 mt-1">Configure o perfil do CNPJ novo e o mix de telecom desejado para gerar abordagens instantâneas com a marca Everson Tech.</p>
-                        </div>
-
-                        <div class="space-y-3 text-xs">
-                            <div>
-                                <label class="block text-slate-300 font-medium mb-1">Segmento da Empresa (CNAE)</label>
-                                <select id="script-segment" onchange="generateScriptCustom()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                                    <option value="Comércio & Varejo">Comércio & Varejo (Loja, Restaurante, Franquia)</option>
-                                    <option value="Serviços Profissionais">Serviços Profissionais (Consultoria, TI, Escritório)</option>
-                                    <option value="Saúde & Clínicas">Saúde & Clínicas (Médico, Odonto, Estética)</option>
-                                    <option value="Logística & Transporte">Logística & Transporte (Distribuidora, Cargas)</option>
-                                    <option value="Construção Civil">Construção Civil (Construtora, Engenharia)</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-slate-300 font-medium mb-1">Oferta Principal de Telecom</label>
-                                <select id="script-product" onchange="generateScriptCustom()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                                    <option value="Combo Completo">Combo Completo (Fibra + Móvel + PABX Cloud)</option>
-                                    <option value="Fibra Dedicada">Fibra Dedicada / Alta Velocidade com IP Fixo</option>
-                                    <option value="Móvel Corporativo">Móvel Corporativo (Gestão de Dados & Ligações)</option>
-                                    <option value="PABX Cloud & SVA">PABX Cloud / URA + WhatsApp Empresarial</option>
-                                    <option value="M2M e IoT">Chips M2M para POS Maquininhas & Rastreamento</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label class="block text-slate-300 font-medium mb-1">Nome Fantasia do Lead</label>
-                                <input type="text" id="script-company" oninput="generateScriptCustom()" value="Nova Empresa Exemplo Ltda" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            </div>
-
-                            <div>
-                                <label class="block text-slate-300 font-medium mb-1">Nome do Sócio / Contato</label>
-                                <input type="text" id="script-socio" oninput="generateScriptCustom()" value="Ricardo" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            </div>
-
-                            <div>
-                                <label class="block text-slate-300 font-medium mb-1">Cidade / Estado (UF)</label>
-                                <input type="text" id="script-location" oninput="generateScriptCustom()" value="São Paulo / SP" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            </div>
-                        </div>
-
-                        <div class="pt-2">
-                            <button onclick="generateScriptCustom()" class="w-full py-2.5 bg-cyanaccent/20 border border-cyanaccent/50 hover:bg-cyanaccent/30 text-cyan-300 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-arrows-rotate"></i>
-                                <span>Atualizar Textos do Playbook</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5 space-y-5 border border-slate-800 lg:col-span-2">
-                        
-                        <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-emerald-400 flex items-center gap-2">
-                                    <i class="fa-brands fa-whatsapp text-base"></i> Script 1: Abordagem Direta no WhatsApp (Dia 1)
-                                </span>
-                                <button onclick="copyToClipboard('script-out-wa')" class="text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1 rounded-lg transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-copy text-cyanaccent"></i> Copiar Texto
-                                </button>
-                            </div>
-                            <div id="script-out-wa" class="bg-slate-950 p-3.5 rounded-lg text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-line border border-slate-800"></div>
-                        </div>
-
-                        <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-cyan-400 flex items-center gap-2">
-                                    <i class="fa-solid fa-phone-volume text-base"></i> Script 2: Roteiro Cold Call com Sócio (Dia 2)
-                                </span>
-                                <button onclick="copyToClipboard('script-out-call')" class="text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1 rounded-lg transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-copy text-cyanaccent"></i> Copiar Texto
-                                </button>
-                            </div>
-                            <div id="script-out-call" class="bg-slate-950 p-3.5 rounded-lg text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-line border border-slate-800"></div>
-                        </div>
-
-                        <div class="bg-slate-900/90 rounded-xl p-4 border border-slate-800 space-y-2">
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-amber-400 flex items-center gap-2">
-                                    <i class="fa-solid fa-shield-halved text-base"></i> Script 3: Quebra de Objeções & Proposta de Valor
-                                </span>
-                                <button onclick="copyToClipboard('script-out-obj')" class="text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 border border-slate-700 px-3 py-1 rounded-lg transition-all flex items-center gap-1.5">
-                                    <i class="fa-solid fa-copy text-cyanaccent"></i> Copiar Texto
-                                </button>
-                            </div>
-                            <div id="script-out-obj" class="bg-slate-950 p-3.5 rounded-lg text-xs font-mono text-slate-300 leading-relaxed whitespace-pre-line border border-slate-800"></div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </section>
-
-            <!-- TAB 4: DASHBOARD ANALYTICS & REDE -->
-            <section id="tab-analytics" class="hidden space-y-6">
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    
-                    <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-map-location-dot text-cyanaccent"></i> CNPJs Novos por Região do Brasil
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Distribuição Territorial</span>
-                        </div>
-                        <div class="relative h-64 w-full">
-                            <canvas id="chart-regions"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-chart-bar text-blue-400"></i> Top Segmentos Abertos (&lt;30 dias)
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Frequência por Setor</span>
-                        </div>
-                        <div class="relative h-64 w-full">
-                            <canvas id="chart-cnaes"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-filter-circle-dollar text-emerald-400"></i> Funil de Conversão SDR (Estágios)
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Taxa de Passagem</span>
-                        </div>
-                        <div class="relative h-64 w-full">
-                            <canvas id="chart-funnel"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                                <i class="fa-solid fa-pie-chart text-amber-400"></i> Demanda Estimada por Produto Telecom
-                            </h3>
-                            <span class="text-[11px] text-slate-400">Mix de Ofertas</span>
-                        </div>
-                        <div class="relative h-64 w-full">
-                            <canvas id="chart-products"></canvas>
-                        </div>
-                    </div>
-
-                </div>
-            </section>
-
-        </main>
-    </div>
-
-    <!-- MODAL 1: LEAD DETAIL & FEASIBILITY SIMULATOR -->
-    <div id="modal-lead-detail" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            
-            <div class="p-5 border-b border-slate-800 flex items-start justify-between bg-slate-950/80">
-                <div>
-                    <div class="flex items-center gap-2.5">
-                        <h2 id="modal-company-name" class="text-lg font-extrabold text-white">Razão Social Empresa</h2>
-                        <span id="modal-badge-days" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-800">
-                            Aberto há 3 dias
-                        </span>
-                    </div>
-                    <p id="modal-cnpj-info" class="text-xs text-slate-400 mt-0.5 font-mono">CNPJ: 00.000.000/0001-00</p>
-                </div>
-                <button onclick="closeModal('modal-lead-detail')" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
             </div>
 
-            <div class="p-6 space-y-6 overflow-y-auto flex-grow text-xs text-slate-300">
-                
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950 p-4 rounded-xl border border-slate-800">
-                    <div>
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Sócio / Contato</span>
-                        <strong id="modal-socio" class="text-slate-200">Nome Sócio</strong>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Telefone</span>
-                        <strong id="modal-phone" class="text-cyanaccent font-mono">(00) 00000-0000</strong>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">Cidade / UF</span>
-                        <strong id="modal-location" class="text-slate-200">Cidade - UF</strong>
-                    </div>
-                    <div>
-                        <span class="block text-[10px] uppercase font-bold text-slate-500">CEP Local</span>
-                        <strong id="modal-cep" class="text-slate-200 font-mono">00000-000</strong>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">CNAE Principal</span>
-                        <p id="modal-cnae" class="font-semibold text-white">6201-5/00 - Desenvolvimento de Software</p>
-                        <p id="modal-segment" class="text-cyanaccent text-[11px]">Segmento: Serviços Profissionais</p>
-                    </div>
-
-                    <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase">Pacote Recomendado Everson Tech</span>
-                        <p id="modal-bundle" class="font-semibold text-emerald-400">Fibra 600MB Dedicada + 5 Linhas Móveis + PABX Cloud</p>
-                        <p id="modal-mrr-estimate" class="text-amber-400 text-[11px] font-mono">Estimativa Ticket: R$ 1.450 /mês</p>
-                    </div>
-                </div>
-
-                <div class="bg-gradient-to-br from-slate-950 to-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+            <!-- TAB 2: DASHBOARD DE METAS & FORECAST -->
+            <div id="forecastTab" class="tab-content hidden space-y-6">
+                <!-- Visão Executiva das Metas da Equipe -->
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-tower-cell text-cyanaccent"></i>
-                            <h4 class="font-bold text-white">Teste de Viabilidade Técnica da Rede</h4>
+                        <div>
+                            <h3 class="text-sm font-bold text-white">Painel Geral de Metas & Previsão de Fechamento (Forecast)</h3>
+                            <p class="text-xs text-slate-400">Meta Padrão: R$ 8.000,00 de MRR / SDR | Previsão ponderada pela taxa de conversão da esteira</p>
                         </div>
-                        <button onclick="runViabilityTest()" id="btn-run-viability" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all">
-                            Executar Teste CEP
-                        </button>
+                        <span class="bg-emeraldgreen/20 text-emeraldgreen font-mono text-xs px-3 py-1 rounded-full font-bold">Meta Global: R$ 80.000 MRR</span>
                     </div>
 
-                    <div id="viability-progress" class="hidden space-y-2">
-                        <div class="flex justify-between text-[11px]">
-                            <span class="text-slate-400">Consultando disponibilidade de porta de Fibra...</span>
-                            <span id="viability-percent" class="text-cyanaccent font-mono font-bold">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div id="viability-bar" class="bg-gradient-to-r from-blue-500 to-cyan-400 h-full w-0 transition-all duration-300"></div>
-                        </div>
-                    </div>
-
-                    <div id="viability-result" class="p-3 rounded-lg bg-slate-900 border border-slate-800 text-xs hidden"></div>
-                </div>
-
-                <div class="space-y-2">
-                    <h4 class="font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-clock-rotate-left text-cyanaccent"></i> Histórico de Contatos & Anotações
-                    </h4>
-                    <div id="modal-notes-list" class="space-y-2 max-h-32 overflow-y-auto p-2 bg-slate-950 rounded-xl border border-slate-800"></div>
-                    <div class="flex gap-2">
-                        <input type="text" id="input-new-note" placeholder="Adicionar nota sobre a ligação ou retorno..." class="flex-grow bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyanaccent">
-                        <button onclick="addLeadNote()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-cyanaccent rounded-lg font-bold text-xs">
-                            Salvar
-                        </button>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 text-slate-400 uppercase font-mono text-[10px]">
+                                <tr>
+                                    <th class="p-3">SDR Operacional</th>
+                                    <th class="p-3">Meta Mensal (MRR)</th>
+                                    <th class="p-3">Realizado (Fechado)</th>
+                                    <th class="p-3">Previsão (Forecast)</th>
+                                    <th class="p-3">% Atingimento</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sdrGoalsTable" class="divide-y divide-slate-800">
+                                <!-- Preenchido por JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
             </div>
 
-            <div class="p-4 border-t border-slate-800 bg-slate-950 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <button onclick="openWhatsAppForCurrentLead()" class="w-full sm:w-auto px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/30">
-                    <i class="fa-brands fa-whatsapp text-lg"></i>
-                    <span>Abrir WhatsApp com Script Pronto</span>
-                </button>
-
-                <button onclick="closeModal('modal-lead-detail')" class="w-full sm:w-auto px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-medium text-xs">
-                    Fechar
-                </button>
+            <!-- TAB 3: KANBAN -->
+            <div id="kanbanTab" class="tab-content hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3" id="kanbanGrid">
+                    <!-- Kanban Columns in JS -->
+                </div>
             </div>
 
         </div>
     </div>
 
-    <!-- MODAL 2: ADD NEW SIMULATED LEAD -->
-    <div id="modal-add-lead" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden">
-            <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
-                <h3 class="font-extrabold text-white text-base flex items-center gap-2">
-                    <i class="fa-solid fa-plus-circle text-cyanaccent"></i> Simular Novo CNPJ Receita Federal
-                </h3>
-                <button onclick="closeModal('modal-add-lead')" class="text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <form onsubmit="handleSaveNewLead(event)" class="p-6 space-y-4 text-xs">
-                <div>
-                    <label class="block text-slate-300 font-semibold mb-1">Razão Social / Nome Fantasia</label>
-                    <input type="text" id="new-razao" required placeholder="Ex: TechSul Soluções Digitais Ltda" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">CNPJ</label>
-                        <input type="text" id="new-cnpj" required placeholder="54.321.098/0001-99" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">Data de Abertura</label>
-                        <select id="new-days" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="1">Há 1 dia</option>
-                            <option value="3">Há 3 dias</option>
-                            <option value="7">Há 7 dias</option>
-                            <option value="15">Há 15 dias</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">Região</label>
-                        <select id="new-region" onchange="updateNewUfOptions()" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="Sudeste">Sudeste</option>
-                            <option value="Sul">Sul</option>
-                            <option value="Centro-Oeste">Centro-Oeste</option>
-                            <option value="Nordeste">Nordeste</option>
-                            <option value="Norte">Norte</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">UF / Estado</label>
-                        <select id="new-uf" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent"></select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">Cidade</label>
-                        <input type="text" id="new-city" required placeholder="Ex: Campinas" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">Segmento</label>
-                        <select id="new-segment" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                            <option value="Serviços Profissionais">Serviços Profissionais</option>
-                            <option value="Comércio & Varejo">Comércio & Varejo</option>
-                            <option value="Saúde & Clínicas">Saúde & Clínicas</option>
-                            <option value="Logística & Transporte">Logística & Transporte</option>
-                            <option value="Construção Civil">Construção Civil</option>
-                            <option value="Agronegócio">Agronegócio</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">Sócio Contato</label>
-                        <input type="text" id="new-socio" required placeholder="Ex: Dr. Roberto Santos" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                    </div>
-                    <div>
-                        <label class="block text-slate-300 font-semibold mb-1">WhatsApp / Telefone</label>
-                        <input type="text" id="new-phone" required placeholder="(11) 98765-4321" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-cyanaccent">
-                    </div>
-                </div>
-
-                <div class="pt-3 border-t border-slate-800 flex justify-end gap-2">
-                    <button type="button" onclick="closeModal('modal-add-lead')" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-lg font-medium">Cancelar</button>
-                    <button type="submit" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg font-bold">Adicionar à Base</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- TOAST CONTAINER -->
-    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-
+    <!-- ==================== LOGICA JAVASCRIPT ==================== -->
     <script>
-        
-        // TEST USERS DATABASE WITH RBAC ROLES
-        const TEST_USERS = [
-            {
-                email: 'gestor@eversontech.com.br',
-                password: 'Gestor123!',
-                name: 'Everson Santos',
-                role: 'Gestor de Rede Telecom',
-                roleKey: 'gestor',
-                avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
-                bannerTitle: 'Sessão Ativa: Gestor de Rede',
-                bannerDesc: 'Visão executiva total de mapas territoriais, gestão de SDRs e expansão de infraestrutura de Fibra.'
-            },
-            {
-                email: 'sdr.silva@eversontech.com.br',
-                password: 'Sdr123!',
-                name: 'Ricardo Silva',
-                role: 'SDR Operacional',
-                roleKey: 'sdr',
-                avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
-                bannerTitle: 'Sessão Ativa: SDR Operacional',
-                bannerDesc: 'Foco em execução da cadência diária, disparo de WhatsApp e qualificação técnica de CNPJs recém-abertos.'
-            },
-            {
-                email: 'vendas@eversontech.com.br',
-                password: 'Vendas123!',
-                name: 'Amanda Oliveira',
-                role: 'Executivo de Vendas (Closer)',
-                roleKey: 'closer',
-                avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80',
-                bannerTitle: 'Sessão Ativa: Executivo de Vendas (Closer)',
-                bannerDesc: 'Foco em oportunidades qualificadas (SQL), apresentação de propostas e fechamento de contratos MRR.'
-            }
+        // Base de Dados de Usuários (1 Gestor + 10 SDRs)
+        const systemUsers = [
+            { id: 'gestor', name: 'Everson Mendes (Gestor)', email: 'gestor@eversontech.com.br', pass: 'gestor123', role: 'GESTOR' },
+            { id: 'sdr1', name: 'Carlos Silva (SDR 1)', email: 'sdr1@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr2', name: 'Ana Oliveira (SDR 2)', email: 'sdr2@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr3', name: 'Lucas Costa (SDR 3)', email: 'sdr3@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr4', name: 'Mariana Santos (SDR 4)', email: 'sdr4@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr5', name: 'Felipe Rocha (SDR 5)', email: 'sdr5@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr6', name: 'Beatriz Lima (SDR 6)', email: 'sdr6@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr7', name: 'Rafael Souza (SDR 7)', email: 'sdr7@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr8', name: 'Camila Alves (SDR 8)', email: 'sdr8@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr9', name: 'Rodrigo Pereira (SDR 9)', email: 'sdr9@eversontech.com.br', pass: 'sdr123', role: 'SDR' },
+            { id: 'sdr10', name: 'Fernanda Martins (SDR 10)', email: 'sdr10@eversontech.com.br', pass: 'sdr123', role: 'SDR' }
+        ];
+
+        // Base de Leads Simulates com Atribuição
+        let mockLeads = [
+            { id: 101, name: "ALPHA LOGISTICA LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 3, uf: "SP", segment: "Logística", ownerId: "sdr1", stage: 2, mrrValue: 1200 },
+            { id: 102, name: "CLINICA BEM ESTAR SAUDE", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 6, uf: "PR", segment: "Saúde", ownerId: "sdr2", stage: 3, mrrValue: 850 },
+            { id: 103, name: "NEXUS TECNOLOGIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 10, uf: "MG", segment: "Serviços", ownerId: null, stage: 1, mrrValue: 2400 },
+            { id: 104, name: "SUPERMERCADO NOVO RUMO", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 12, uf: "BA", segment: "Varejo", ownerId: null, stage: 1, mrrValue: 600 },
+            { id: 105, name: "CONSTRUTORA SUL EIRELI", cnpj: "52.601.778/0001-44", cleanCnpj: "52601778000144", days: 2, uf: "SC", segment: "Construção", ownerId: "sdr1", stage: 5, mrrValue: 3500 },
+            { id: 106, name: "AGRO TRANSPORTES GOIAS", cnpj: "52.710.001/0001-10", cleanCnpj: "52710001000110", days: 18, uf: "GO", segment: "Logística", ownerId: "sdr3", stage: 4, mrrValue: 1800 }
         ];
 
         let currentUser = null;
 
-        // REGION & UF MAPPINGS
-        const regionUfMap = {
-            'Sudeste': ['SP', 'RJ', 'MG', 'ES'],
-            'Sul': ['PR', 'SC', 'RS'],
-            'Centro-Oeste': ['DF', 'GO', 'MT', 'MS'],
-            'Nordeste': ['BA', 'PE', 'CE', 'MA', 'PB', 'RN', 'AL', 'SE', 'PI'],
-            'Norte': ['AM', 'PA', 'RO', 'TO', 'AP', 'AC', 'RR']
-        };
-
-        // CNPJ DATABASE (<30 DAYS)
-        let leadsData = [
-            { id: 1, razao: "TechFlex Soluções Digitais Ltda", cnpj: "53.890.123/0001-10", region: "Sudeste", uf: "SP", city: "São Paulo", cnae: "6201-5/00 - Desenvol. de Software", segment: "Serviços Profissionais", daysOpen: 3, socio: "Ricardo Mendes", phone: "(11) 98765-4321", cep: "01310-100", score: 95, stage: "d1", product: "Fibra Dedicada", mrr: 1600, bundle: "Fibra Dedicada 600MB + 5 Linhas Móveis + PABX Cloud", notes: ["Cadência iniciada no WhatsApp"] },
-            { id: 2, razao: "Empório e Restaurante Sabor Real Ltda", cnpj: "53.912.456/0001-88", region: "Sudeste", uf: "RJ", city: "Rio de Janeiro", cnae: "5611-2/01 - Restaurantes e Bares", segment: "Comércio & Varejo", daysOpen: 5, socio: "Camila Rocha", phone: "(21) 99876-5432", cep: "20040-002", score: 88, stage: "d2", product: "M2M / IoT", mrr: 950, bundle: "Banda Larga PME 400MB + 3 Chips M2M Maquininhas", notes: ["Ligação agendada para verificar inauguração"] },
-            { id: 3, razao: "Minas Logística e Cargas Rápidas Ltda", cnpj: "53.955.789/0001-44", region: "Sudeste", uf: "MG", city: "Belo Horizonte", cnae: "4930-2/02 - Transp. Rodoviário de Cargas", segment: "Logística & Transporte", daysOpen: 2, socio: "Fernando Silva", phone: "(31) 97654-3210", cep: "30130-010", score: 92, stage: "d1", product: "Móvel Corporativo", mrr: 2100, bundle: "15 Linhas Móveis Gestor + Chip M2M Rastreamento", notes: ["Sócio solicitou cotação para frota"] },
-            { id: 4, razao: "Clínica Odontológica Sorriso & Saúde Ltda", cnpj: "53.811.222/0001-05", region: "Sul", uf: "PR", city: "Curitiba", cnae: "8630-5/04 - Atividade Odontológica", segment: "Saúde & Clínicas", daysOpen: 8, socio: "Dra. Juliana Costa", phone: "(41) 98877-6655", cep: "80010-000", score: 90, stage: "d4", product: "PABX Cloud", mrr: 1350, bundle: "Fibra 500MB + PABX Cloud com URA p/ Agendamentos", notes: ["Apresentado valor agregado de PABX Virtual"] },
-            { id: 5, razao: "SulTech Engenharia e Obras Eireli", cnpj: "53.744.888/0001-33", region: "Sul", uf: "SC", city: "Florianópolis", cnae: "4120-4/00 - Construção de Edifícios", segment: "Construção Civil", daysOpen: 12, socio: "Eng. Marcelo Souza", phone: "(48) 99123-4567", cep: "88010-400", score: 84, stage: "d6", product: "Fibra Dedicada", mrr: 1800, bundle: "Modem 5G Canteiro de Obras + Link Dedicado Matriz", notes: ["Em validação de viabilidade de cobertura"] },
-            { id: 6, razao: "AgroMais Distribuidora de Insumos Ltda", cnpj: "53.999.111/0001-99", region: "Centro-Oeste", uf: "GO", city: "Goiânia", cnae: "4683-4/00 - Comércio de Defensivos", segment: "Agronegócio", daysOpen: 4, socio: "Roberto Fonseca", phone: "(62) 98456-7890", cep: "74003-010", score: 89, stage: "d2", product: "Móvel Corporativo", mrr: 1900, bundle: "8 Linhas Móveis Cobertura Rural + Banda Larga Sede", notes: ["Cold call realizada com sucesso"] },
-            { id: 7, razao: "Capital Consultoria e Gestão B2B Ltda", cnpj: "54.010.203/0001-12", region: "Centro-Oeste", uf: "DF", city: "Brasília", cnae: "7020-4/00 - Consultoria em Gestão", segment: "Serviços Profissionais", daysOpen: 1, socio: "Ana Paula Lima", phone: "(61) 99234-5678", cep: "70040-010", score: 96, stage: "sql", product: "Combo Completo", mrr: 2400, bundle: "Link Dedicado 1GB + PABX Cloud 12 Ramais + 6 Linhas", notes: ["Reunião agendada com o Closer"] },
-            { id: 8, razao: "Bahia Importação e Comércio Atacadista Ltda", cnpj: "53.600.300/0001-77", region: "Nordeste", uf: "BA", city: "Salvador", cnae: "4649-4/99 - Comércio Atacadista", segment: "Comércio & Varejo", daysOpen: 15, socio: "Lucas Oliveira", phone: "(71) 98712-3456", cep: "40020-000", score: 82, stage: "d8", product: "Fibra Dedicada", mrr: 1450, bundle: "Fibra PME 800MB + IP Fixo + Backup em Nuvem", notes: ["Proposta comercial enviada por e-mail"] },
-            { id: 9, razao: "Pernambuco Transportes Rápidos Ltda", cnpj: "53.822.999/0001-66", region: "Nordeste", uf: "PE", city: "Recife", cnae: "4930-2/01 - Transporte Municipal", segment: "Logística & Transporte", daysOpen: 6, socio: "Gabriel Santos", phone: "(81) 99654-3210", cep: "50010-000", score: 91, stage: "d4", product: "M2M / IoT", mrr: 1100, bundle: "10 Chips M2M Telemetria + Fibra Óptica Garagem", notes: ["Foco em chips IoT para rastreamento"] },
-            { id: 10, razao: "Amazônia Distribuição de Bebidas Ltda", cnpj: "53.711.444/0001-22", region: "Norte", uf: "AM", city: "Manaus", cnae: "4635-4/99 - Comércio de Bebidas", segment: "Comércio & Varejo", daysOpen: 10, socio: "Thiago Castro", phone: "(92) 98123-9876", cep: "69005-070", score: 85, stage: "d6", product: "Fibra Dedicada", mrr: 1750, bundle: "Fibra 500MB Dedicada com Garantia SLA 4 Horas", notes: ["Viabilidade aprovada no Distrito Industrial"] },
-            { id: 11, razao: "Gaúcha Varejo e Moda Urbana Ltda", cnpj: "53.555.333/0001-11", region: "Sul", uf: "RS", city: "Porto Alegre", cnae: "4781-4/00 - Comércio de Vestuário", segment: "Comércio & Varejo", daysOpen: 18, socio: "Mariana Freitas", phone: "(51) 99345-6789", cep: "90010-180", score: 78, stage: "sql", product: "PABX Cloud", mrr: 850, bundle: "Banda Larga 400MB + WhatsApp Business Integrado", notes: ["Agendada assinatura do contrato"] },
-            { id: 12, razao: "Vanguarda Segurança Eletrônica Ltda", cnpj: "53.988.777/0001-55", region: "Sudeste", uf: "SP", city: "Campinas", cnae: "8020-0/01 - Serviços de Monitoramento", segment: "Serviços Profissionais", daysOpen: 7, socio: "Carlos Eduardo Paes", phone: "(19) 98234-1122", cep: "13010-200", score: 93, stage: "d8", product: "Combo Completo", mrr: 2200, bundle: "IP Dedicado + 20 Chips M2M Alarmes + PABX Virtual", notes: ["Aguardando aprovação do sócio"] },
-            { id: 13, razao: "Centro-Oeste Grãos e Insumos Ltda", cnpj: "53.611.888/0001-90", region: "Centro-Oeste", uf: "MS", city: "Campo Grande", cnae: "4683-4/00 - Insumos Agrícolas", segment: "Agronegócio", daysOpen: 14, socio: "Rodrigo Alves", phone: "(67) 99988-7766", cep: "79002-000", score: 87, stage: "sql", product: "Móvel Corporativo", mrr: 1650, bundle: "12 Linhas Móveis com Dados Compartilhados", notes: ["SQL Confirmado com a diretoria"] },
-            { id: 14, razao: "Nordeste Solar & Energia Renovável Ltda", cnpj: "53.844.111/0001-00", region: "Nordeste", uf: "CE", city: "Fortaleza", cnae: "4321-5/00 - Instalações Elétricas", segment: "Construção Civil", daysOpen: 9, socio: "Beatriz Machado", phone: "(85) 98899-0011", cep: "60010-120", score: 94, stage: "d2", product: "Fibra Dedicada", mrr: 1500, bundle: "Fibra Dedicada 500MB + PABX Cloud 6 Ramais", notes: ["Em contato com a proprietária"] }
-        ];
-
-        let filteredLeads = [...leadsData];
-        let currentLeadModalId = null;
-        let viewMode = 'table';
-        let chartInstances = {};
-
-        // AUTHENTICATION FUNCTIONS
-        function togglePasswordVisibility() {
-            const pwdInput = document.getElementById('login-password');
-            const icon = document.getElementById('toggle-pwd-icon');
-            if (pwdInput.type === 'password') {
-                pwdInput.type = 'text';
-                icon.className = 'fa-solid fa-eye-slash';
-            } else {
-                pwdInput.type = 'password';
-                icon.className = 'fa-solid fa-eye';
-            }
+        function fillLogin(email, pass) {
+            document.getElementById('inputEmail').value = email;
+            document.getElementById('inputPassword').value = pass;
         }
 
-        function quickLogin(email, password) {
-            document.getElementById('login-email').value = email;
-            document.getElementById('login-password').value = password;
-            authenticateUser(email, password);
-        }
-
-        function handleLoginSubmit(e) {
+        function handleAuthLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.trim();
-            const password = document.getElementById('login-password').value.trim();
-            authenticateUser(email, password);
-        }
+            const email = document.getElementById('inputEmail').value;
+            const pass = document.getElementById('inputPassword').value;
 
-        function authenticateUser(email, password) {
-            const user = TEST_USERS.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
-            
+            const user = systemUsers.find(u => u.email === email && u.pass === pass);
+
             if (user) {
                 currentUser = user;
-                showToast(`Bem-vindo, ${user.name}! Login efetuado com sucesso.`, 'success');
-                
-                // Animate transition to Dashboard
-                document.getElementById('login-screen').classList.add('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('app-dashboard').classList.remove('hidden');
-                    applyUserPermissions();
-                    initUfDropdown();
-                    applyFilters();
-                    generateScriptCustom();
-                    initCharts();
-                    updateNewUfOptions();
-                }, 400);
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainDashboard').classList.remove('hidden');
+                document.getElementById('navUserName').innerText = user.name;
+                document.getElementById('navUserRole').innerText = user.role === 'GESTOR' ? 'Gestor de Rede' : 'SDR Operacional';
 
+                renderLeadsTable();
+                renderGoalsAndForecast();
             } else {
-                showToast("Credenciais inválidas. Verifique o e-mail ou use os botões de Acesso Rápido.", "error");
+                document.getElementById('loginError').classList.remove('hidden');
             }
         }
 
-        function handleLogout() {
+        function logout() {
             currentUser = null;
-            document.getElementById('app-dashboard').classList.add('hidden');
-            document.getElementById('login-screen').classList.remove('hidden', 'opacity-0', 'pointer-events-none');
-            document.getElementById('login-password').value = '';
-            showToast("Você saiu do sistema.", "info");
+            document.getElementById('mainDashboard').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
         }
 
-        function applyUserPermissions() {
-            if (!currentUser) return;
-
-            // Update Header User Profile
-            document.getElementById('user-avatar').src = currentUser.avatar;
-            document.getElementById('user-name').textContent = currentUser.name;
-            document.getElementById('user-role-badge').textContent = currentUser.role;
-
-            // Update Welcome Banner
-            document.getElementById('role-banner-title').textContent = currentUser.bannerTitle;
-            document.getElementById('role-banner-desc').textContent = currentUser.bannerDesc;
-
-            // Role specific default tab switches
-            if (currentUser.roleKey === 'sdr') {
-                switchTab('tab-kanban'); // SDR defaults to Kanban cadence
-            } else if (currentUser.roleKey === 'closer') {
-                switchTab('tab-leads'); // Closer defaults to qualified lead list
-            } else {
-                switchTab('tab-leads'); // Gestor full view
-            }
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
         }
 
-        // APP FILTER & LOGIC
-        function initUfDropdown() {
-            const regionSelect = document.getElementById('filter-region').value;
-            const ufSelect = document.getElementById('filter-uf');
-            ufSelect.innerHTML = '<option value="ALL">Todos os Estados</option>';
-
-            let ufsToInclude = [];
-            if (regionSelect === 'ALL') {
-                Object.values(regionUfMap).forEach(list => ufsToInclude.push(...list));
-            } else if (regionUfMap[regionSelect]) {
-                ufsToInclude = regionUfMap[regionSelect];
-            }
-
-            ufsToInclude = [...new Set(ufsToInclude)].sort();
-            ufsToInclude.forEach(uf => {
-                const opt = document.createElement('option');
-                opt.value = uf;
-                opt.textContent = uf;
-                ufSelect.appendChild(opt);
-            });
-        }
-
-        function onRegionChange() {
-            initUfDropdown();
-            applyFilters();
-        }
-
-        function updateNewUfOptions() {
-            const reg = document.getElementById('new-region').value;
-            const ufSel = document.getElementById('new-uf');
-            ufSel.innerHTML = '';
-            const list = regionUfMap[reg] || ['SP'];
-            list.forEach(uf => {
-                const opt = document.createElement('option');
-                opt.value = uf;
-                opt.textContent = uf;
-                ufSel.appendChild(opt);
-            });
-        }
-
-        function applyFilters() {
-            const search = document.getElementById('global-search').value.toLowerCase().trim();
-            const region = document.getElementById('filter-region').value;
-            const uf = document.getElementById('filter-uf').value;
-            const segment = document.getElementById('filter-segment').value;
-            const maxDays = parseInt(document.getElementById('filter-days').value, 10);
-            const product = document.getElementById('filter-product').value;
-
-            filteredLeads = leadsData.filter(lead => {
-                const matchSearch = !search || 
-                    lead.razao.toLowerCase().includes(search) ||
-                    lead.cnpj.includes(search) ||
-                    lead.city.toLowerCase().includes(search) ||
-                    lead.socio.toLowerCase().includes(search) ||
-                    lead.cnae.toLowerCase().includes(search);
-
-                const matchRegion = (region === 'ALL') || (lead.region === region);
-                const matchUf = (uf === 'ALL') || (lead.uf === uf);
-                const matchSegment = (segment === 'ALL') || (lead.segment === segment);
-                const matchDays = lead.daysOpen <= maxDays;
-                const matchProduct = (product === 'ALL') || (lead.product === product);
-
-                return matchSearch && matchRegion && matchUf && matchSegment && matchDays && matchProduct;
-            });
-
-            document.getElementById('filtered-count-badge').textContent = `Mostrando ${filteredLeads.length} de ${leadsData.length} empresas`;
-            updateKpiMetrics();
-            renderLeadsTable();
-            renderLeadsCards();
-            renderKanban();
-            updateChartsData();
-        }
-
-        function updateKpiMetrics() {
-            document.getElementById('kpi-total-cnpjs').textContent = filteredLeads.length;
-            const activeCadence = filteredLeads.filter(l => l.stage !== 'sql').length;
-            document.getElementById('kpi-cadence-active').textContent = activeCadence;
-            const sqls = filteredLeads.filter(l => l.stage === 'sql').length;
-            document.getElementById('kpi-sqls').textContent = sqls;
-            const totalMrr = filteredLeads.reduce((acc, l) => acc + l.mrr, 0);
-            document.getElementById('kpi-mrr').textContent = totalMrr.toLocaleString('pt-BR');
-        }
-
+        // Render da Tabela com Trava Anticolisão
         function renderLeadsTable() {
-            const tbody = document.getElementById('leads-table-body');
+            const tbody = document.getElementById('leadsTableBody');
             tbody.innerHTML = '';
 
-            if (filteredLeads.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" class="p-8 text-center text-slate-500">
-                            <i class="fa-solid fa-folder-open text-3xl mb-2 block"></i>
-                            Nenhum CNPJ encontrado com os filtros selecionados.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
+            mockLeads.forEach(lead => {
+                const owner = systemUsers.find(u => u.id === lead.ownerId);
+                const isOwner = lead.ownerId === currentUser.id;
+                const isUnassigned = !lead.ownerId;
+                const isManager = currentUser.role === 'GESTOR';
 
-            filteredLeads.forEach(lead => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/40 cursor-pointer transition-all border-b border-slate-800/60";
-                tr.onclick = (e) => {
-                    if (!e.target.closest('button') && !e.target.closest('select')) {
-                        openLeadModal(lead.id);
+                let actionHtml = '';
+
+                if (isUnassigned) {
+                    actionHtml = `<button onclick="claimLead(${lead.id})" class="bg-emeraldgreen text-slate-950 font-bold px-3 py-1 rounded text-[10px]">Assumir Lead</button>`;
+                } else if (isOwner) {
+                    actionHtml = `<span class="text-cyanaccent font-bold"><i class="fa-solid fa-check"></i> Seu Lead</span>`;
+                } else {
+                    actionHtml = `<span class="text-slate-500 font-medium" title="Atendido por outro SDR"><i class="fa-solid fa-lock text-rose-400"></i> ${owner ? owner.name.split(' ')[0] : 'Ocupado'}</span>`;
+                    if (isManager) {
+                        actionHtml += ` <button onclick="releaseLead(${lead.id})" class="text-[9px] bg-slate-800 text-rose-400 px-1.5 py-0.5 rounded ml-1">Liberar</button>`;
                     }
-                };
+                }
 
-                const stageBadge = getStageBadgeHtml(lead.stage);
-                const scoreColor = lead.score >= 90 ? 'text-emerald-400 bg-emerald-950/60 border-emerald-800' : 
-                                 lead.score >= 80 ? 'text-cyan-400 bg-cyan-950/60 border-cyan-800' : 'text-amber-400 bg-amber-950/60 border-amber-800';
-
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60";
                 tr.innerHTML = `
-                    <td class="p-3.5">
-                        <div class="font-bold text-white">${escapeHtml(lead.razao)}</div>
-                        <div class="text-[11px] text-slate-400 font-mono">${lead.cnpj}</div>
+                    <td class="p-3">
+                        <p class="font-bold text-white">${lead.name}</p>
+                        <p class="font-mono text-[10px] text-cyanaccent">${lead.cnpj}</p>
                     </td>
-                    <td class="p-3.5">
-                        <div class="font-medium text-slate-200">${lead.city} / ${lead.uf}</div>
-                        <div class="text-[10px] text-cyanaccent font-semibold">${lead.region}</div>
-                    </td>
-                    <td class="p-3.5">
-                        <div class="font-medium text-slate-300 max-w-xs truncate">${lead.segment}</div>
-                        <div class="text-[10px] text-slate-500 max-w-xs truncate">${lead.cnae}</div>
-                    </td>
-                    <td class="p-3.5">
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
-                            Há ${lead.daysOpen} ${lead.daysOpen === 1 ? 'dia' : 'dias'}
-                        </span>
-                    </td>
-                    <td class="p-3.5">
-                        <div class="font-semibold text-slate-200">${escapeHtml(lead.socio)}</div>
-                        <div class="text-[11px] text-emerald-400 font-mono">${lead.phone}</div>
-                    </td>
-                    <td class="p-3.5 text-center">
-                        <span class="px-2 py-1 rounded-md text-xs font-mono font-extrabold border ${scoreColor}">
-                            ${lead.score}
-                        </span>
-                    </td>
-                    <td class="p-3.5">
-                        ${stageBadge}
-                    </td>
-                    <td class="p-3.5 text-right">
-                        <div class="flex items-center justify-end gap-1.5">
-                            <button onclick="quickOpenWa(${lead.id})" title="Abrir WhatsApp" class="p-2 rounded-lg bg-emerald-950 text-emerald-400 hover:bg-emerald-900 border border-emerald-800 transition-all">
-                                <i class="fa-brands fa-whatsapp text-xs"></i>
-                            </button>
-                            <button onclick="openLeadModal(${lead.id})" title="Ver Detalhes & Viabilidade" class="p-2 rounded-lg bg-blue-950 text-cyanaccent hover:bg-blue-900 border border-blue-800 transition-all">
-                                <i class="fa-solid fa-tower-cell text-xs"></i>
-                            </button>
-                        </div>
-                    </td>
+                    <td class="p-3 font-mono text-[10px]">${lead.days} dias atrás</td>
+                    <td class="p-3">${lead.uf}</td>
+                    <td class="p-3">${lead.segment}</td>
+                    <td class="p-3 font-semibold">${owner ? owner.name : '<span class="text-amber-400">Sem Dono</span>'}</td>
+                    <td class="p-3 text-center">${actionHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        function renderLeadsCards() {
-            const container = document.getElementById('leads-grid-container');
-            container.innerHTML = '';
-
-            filteredLeads.forEach(lead => {
-                const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl p-4 border border-slate-800 space-y-3 relative flex flex-col justify-between hover:border-cyanaccent/50 cursor-pointer";
-                card.onclick = (e) => {
-                    if (!e.target.closest('button') && !e.target.closest('select')) {
-                        openLeadModal(lead.id);
-                    }
-                };
-
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-start justify-between gap-2 mb-2">
-                            <div>
-                                <span class="text-[10px] font-bold text-cyanaccent uppercase tracking-wider">${lead.segment}</span>
-                                <h3 class="text-sm font-bold text-white line-clamp-1">${escapeHtml(lead.razao)}</h3>
-                            </div>
-                            <span class="text-xs font-mono font-extrabold text-emerald-400 bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
-                                Score ${lead.score}
-                            </span>
-                        </div>
-
-                        <div class="text-xs text-slate-400 space-y-1 font-sans">
-                            <p><i class="fa-solid fa-id-card text-slate-500 mr-1.5"></i> <span class="font-mono text-slate-300">${lead.cnpj}</span></p>
-                            <p><i class="fa-solid fa-location-dot text-slate-500 mr-1.5"></i> ${lead.city} - ${lead.uf} (${lead.region})</p>
-                            <p><i class="fa-solid fa-user-tie text-slate-500 mr-1.5"></i> ${escapeHtml(lead.socio)} - <strong class="text-emerald-400 font-mono">${lead.phone}</strong></p>
-                            <p><i class="fa-solid fa-calendar-day text-slate-500 mr-1.5"></i> Abertura: <strong class="text-slate-200">Há ${lead.daysOpen} dias</strong></p>
-                        </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                        ${getStageBadgeHtml(lead.stage)}
-                        <button onclick="openLeadModal(${lead.id})" class="text-xs text-cyanaccent hover:underline font-bold flex items-center gap-1">
-                            <span>Viabilidade</span> <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function toggleViewMode(mode) {
-            viewMode = mode;
-            const tableCont = document.getElementById('leads-table-container');
-            const gridCont = document.getElementById('leads-grid-container');
-            const btnTable = document.getElementById('view-table-btn');
-            const btnCards = document.getElementById('view-cards-btn');
-
-            if (mode === 'table') {
-                tableCont.classList.remove('hidden');
-                gridCont.classList.add('hidden');
-                btnTable.className = "p-1.5 rounded bg-slate-800 text-cyanaccent border border-slate-700";
-                btnCards.className = "p-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800";
-            } else {
-                tableCont.classList.add('hidden');
-                gridCont.classList.remove('hidden');
-                btnTable.className = "p-1.5 rounded bg-slate-900 text-slate-400 border border-slate-800";
-                btnCards.className = "p-1.5 rounded bg-slate-800 text-cyanaccent border border-slate-700";
-            }
-        }
-
-        function renderKanban() {
-            const stages = ['d1', 'd2', 'd4', 'd6', 'd8', 'sql'];
-            stages.forEach(stg => {
-                const el = document.getElementById(`kanban-stage-${stg}`);
-                if (el) el.innerHTML = '';
-            });
-
-            const counts = { d1: 0, d2: 0, d4: 0, d6: 0, d8: 0, sql: 0 };
-
-            filteredLeads.forEach(lead => {
-                const stg = lead.stage;
-                counts[stg] = (counts[stg] || 0) + 1;
-
-                const colEl = document.getElementById(`kanban-stage-${stg}`);
-                if (!colEl) return;
-
-                const card = document.createElement('div');
-                card.className = "bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 p-3 rounded-xl space-y-2 text-xs transition-all shadow-md";
-                
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-1">
-                        <strong class="text-white font-bold line-clamp-1">${escapeHtml(lead.razao)}</strong>
-                        <span class="text-[10px] font-mono text-cyanaccent bg-cyan-950 px-1.5 py-0.5 rounded shrink-0">${lead.uf}</span>
-                    </div>
-
-                    <p class="text-[11px] text-slate-400">${lead.segment}</p>
-                    <div class="text-[11px] text-emerald-400 font-mono">${lead.phone}</div>
-
-                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <select onchange="updateLeadStage(${lead.id}, this.value)" class="bg-slate-950 text-[10px] text-slate-300 border border-slate-700 rounded px-1.5 py-1 focus:outline-none focus:border-cyanaccent">
-                            <option value="d1" ${lead.stage==='d1'?'selected':''}>1: WA/Email</option>
-                            <option value="d2" ${lead.stage==='d2'?'selected':''}>2: Cold Call</option>
-                            <option value="d4" ${lead.stage==='d4'?'selected':''}>4: Valor SVA</option>
-                            <option value="d6" ${lead.stage==='d6'?'selected':''}>6: Viabilidade</option>
-                            <option value="d8" ${lead.stage==='d8'?'selected':''}>8: Proposta</option>
-                            <option value="sql" ${lead.stage==='sql'?'selected':''}>SQL / Agendado</option>
-                        </select>
-
-                        <button onclick="openLeadModal(${lead.id})" class="text-cyanaccent hover:text-white text-[11px]">
-                            <i class="fa-solid fa-up-right-from-square"></i>
-                        </button>
-                    </div>
-                `;
-                colEl.appendChild(card);
-            });
-
-            stages.forEach(stg => {
-                const countBadge = document.getElementById(`kanban-count-${stg}`);
-                if (countBadge) countBadge.textContent = counts[stg] || 0;
-            });
-        }
-
-        function updateLeadStage(id, newStage) {
-            const lead = leadsData.find(l => l.id === id);
+        function claimLead(leadId) {
+            const lead = mockLeads.find(l => l.id === leadId);
             if (lead) {
-                lead.stage = newStage;
-                lead.notes.push(`Estágio alterado para: ${getStageName(newStage)} em ${new Date().toLocaleTimeString()}`);
-                showToast(`Lead "${lead.razao}" movido para ${getStageName(newStage)}!`, 'success');
-                applyFilters();
+                lead.ownerId = currentUser.id;
+                renderLeadsTable();
+                renderGoalsAndForecast();
             }
         }
 
-        function getStageBadgeHtml(stage) {
-            const map = {
-                d1: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-950 text-blue-300 border border-blue-800"><i class="fa-brands fa-whatsapp mr-1"></i>Dia 1: WA/Email</span>`,
-                d2: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-800"><i class="fa-solid fa-phone mr-1"></i>Dia 2: Cold Call</span>`,
-                d4: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800"><i class="fa-solid fa-lightbulb mr-1"></i>Dia 4: Valor SVA</span>`,
-                d6: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950 text-purple-300 border border-purple-800"><i class="fa-solid fa-tower-cell mr-1"></i>Dia 6: Viabilidade</span>`,
-                d8: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-800"><i class="fa-solid fa-file-signature mr-1"></i>Dia 8: Proposta</span>`,
-                sql: `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800"><i class="fa-solid fa-trophy mr-1"></i>SQL Agendado</span>`
-            };
-            return map[stage] || stage;
+        function releaseLead(leadId) {
+            const lead = mockLeads.find(l => l.id === leadId);
+            if (lead) {
+                lead.ownerId = null;
+                renderLeadsTable();
+                renderGoalsAndForecast();
+            }
         }
 
-        function getStageName(stage) {
-            const map = {
-                d1: 'Dia 1: WA/Email',
-                d2: 'Dia 2: Cold Call',
-                d4: 'Dia 4: Valor SVA',
-                d6: 'Dia 6: Viabilidade Técnica',
-                d8: 'Dia 8: Proposta',
-                sql: 'SQL / Agendado'
-            };
-            return map[stage] || stage;
-        }
+        // Cálculo de Metas e Previsão de Fechamento (Forecast)
+        function renderGoalsAndForecast() {
+            const tbody = document.getElementById('sdrGoalsTable');
+            tbody.innerHTML = '';
 
-        function generateScriptCustom() {
-            const segment = document.getElementById('script-segment').value;
-            const product = document.getElementById('script-product').value;
-            const company = document.getElementById('script-company').value || "Nova Empresa Ltda";
-            const socio = document.getElementById('script-socio').value || "Sócio";
-            const location = document.getElementById('script-location').value || "São Paulo / SP";
+            const sdrs = systemUsers.filter(u => u.role === 'SDR');
 
-            const waScript = `Olá, ${socio}! Tudo bem?\n\nParabéns pela recente abertura da *${company}* em ${location}! 🚀\n\nSou o especialista em Telecom B2B da *Everson Tech*. Ajudamos novas empresas do segmento de *${segment}* a estruturarem toda a infraestrutura de *${product}* sem burocracia e com condições exclusivas de implantação para empresas com menos de 30 dias de CNPJ.\n\nConsegue falar 3 minutos hoje para eu te apresentar o estudo de viabilidade sem compromisso?`;
+            sdrs.forEach(sdr => {
+                const targetMRR = 8000;
+                const sdrLeads = mockLeads.filter(l => l.ownerId === sdr.id);
 
-            const callScript = `[SDR Everson Tech]: "Olá, ${socio}! Aqui é o especialista da Everson Tech Inteligência em Telecom. Tudo bem com você?"\n\n[SÓCIO]: "Tudo bem, quem é?"\n\n[SDR Everson Tech]: "Estou te ligando porque vi que vocês acabaram de abrir a ${company} aí em ${location}. Parabéns pelo novo negócio!\n\nNesta fase inicial de inauguração, o maior desafio costuma ser garantir internet Fibra Dedicada de alta velocidade e telefonia corporativa funcionando no primeiro dia.\n\nVocês já fecharam a conectividade para o endereço ou ainda estão cotando fornecedores de telecom?"`;
+                // Cálculo do Realizado (Stage 6 = SQL / Fechado)
+                const realizado = sdrLeads.filter(l => l.stage === 6).reduce((acc, curr) => acc + curr.mrrValue, 0);
 
-            const objScript = `[OBJEÇÃO: "Já tenho internet de pessoa física/CPF" ou "Ainda vou abrir daqui 1 mês"]\n\n[RESPOSTA SDR EVERSON TECH]:\n"Entendo perfeitamente, ${socio}! Porém, para empresas do setor de ${segment}, conexões residenciais não oferecem SLA de reparo prioritário nem IP Fixo para sistemas e maquininhas.\n\nNa Everson Tech, estruturamos soluções enterprise (${product}) com garantia de banda, PABX Cloud e suporte 24h especializado para CNPJ novo.\n\nPodemos deixar a viabilidade técnica testada hoje para que no dia da inauguração sua empresa esteja 100% conectada."`;
+                // Cálculo do Forecast Ponderado pelas etapas do funil
+                const forecast = sdrLeads.reduce((acc, curr) => {
+                    const weight = curr.stage === 1 ? 0.1 : curr.stage === 2 ? 0.2 : curr.stage === 3 ? 0.4 : curr.stage === 4 ? 0.6 : curr.stage === 5 ? 0.8 : 1.0;
+                    return acc + (curr.mrrValue * weight);
+                }, 0);
 
-            document.getElementById('script-out-wa').textContent = waScript;
-            document.getElementById('script-out-call').textContent = callScript;
-            document.getElementById('script-out-obj').textContent = objScript;
-        }
+                const percent = Math.min(100, Math.round((realizado / targetMRR) * 100));
 
-        function initCharts() {
-            if (chartInstances.regions) return;
-
-            const ctxReg = document.getElementById('chart-regions').getContext('2d');
-            chartInstances.regions = new Chart(ctxReg, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Sudeste', 'Sul', 'Centro-Oeste', 'Nordeste', 'Norte'],
-                    datasets: [{
-                        data: [4, 3, 3, 3, 1],
-                        backgroundColor: ['#2563eb', '#00f0ff', '#10b981', '#f59e0b', '#8b5cf6'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } } }
-                }
-            });
-
-            const ctxCnae = document.getElementById('chart-cnaes').getContext('2d');
-            chartInstances.cnaes = new Chart(ctxCnae, {
-                type: 'bar',
-                data: {
-                    labels: ['Comércio/Varejo', 'Serviços Prof.', 'Logística', 'Saúde', 'Agronegócio', 'Construção'],
-                    datasets: [{
-                        label: 'CNPJs Novos',
-                        data: [4, 3, 2, 1, 2, 2],
-                        backgroundColor: '#00f0ff',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { display: false } }
-                    }
-                }
-            });
-
-            const ctxFunnel = document.getElementById('chart-funnel').getContext('2d');
-            chartInstances.funnel = new Chart(ctxFunnel, {
-                type: 'bar',
-                data: {
-                    labels: ['Dia 1 WA', 'Dia 2 Call', 'Dia 4 SVA', 'Dia 6 Viab.', 'Dia 8 Prop.', 'SQL Agendado'],
-                    datasets: [{
-                        label: 'Leads na Fase',
-                        data: [2, 3, 2, 2, 2, 3],
-                        backgroundColor: '#2563eb',
-                        borderRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
-                        y: { ticks: { color: '#94a3b8' }, grid: { color: '#1e293b' } }
-                    }
-                }
-            });
-
-            const ctxProd = document.getElementById('chart-products').getContext('2d');
-            chartInstances.products = new Chart(ctxProd, {
-                type: 'pie',
-                data: {
-                    labels: ['Fibra Dedicada', 'Móvel Corporativo', 'PABX Cloud', 'M2M / IoT', 'Combo Completo'],
-                    datasets: [{
-                        data: [5, 3, 2, 2, 2],
-                        backgroundColor: ['#00f0ff', '#2563eb', '#10b981', '#f59e0b', '#ec4899'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11 } } } }
-                }
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-white">${sdr.name}</td>
+                    <td class="p-3 font-mono">R$ ${targetMRR.toLocaleString('pt-BR')}</td>
+                    <td class="p-3 font-mono text-emeraldgreen font-bold">R$ ${realizado.toLocaleString('pt-BR')}</td>
+                    <td class="p-3 font-mono text-cyanaccent">R$ ${Math.round(forecast).toLocaleString('pt-BR')}</td>
+                    <td class="p-3">
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="bg-cyanaccent h-full" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-1 block">${percent}%</span>
+                    </td>
+                    <td class="p-3 font-semibold">${percent >= 100 ? '🔥 Meta Batida' : 'Em Andamento'}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
-        function updateChartsData() {
-            if (!chartInstances.regions) return;
-
-            const regCounts = { 'Sudeste': 0, 'Sul': 0, 'Centro-Oeste': 0, 'Nordeste': 0, 'Norte': 0 };
-            filteredLeads.forEach(l => regCounts[l.region] = (regCounts[l.region] || 0) + 1);
-            chartInstances.regions.data.datasets[0].data = Object.values(regCounts);
-            chartInstances.regions.update();
-
-            const prodCounts = { 'Fibra Dedicada': 0, 'Móvel Corporativo': 0, 'PABX Cloud': 0, 'M2M / IoT': 0, 'Combo Completo': 0 };
-            filteredLeads.forEach(l => prodCounts[l.product] = (prodCounts[l.product] || 0) + 1);
-            chartInstances.products.data.datasets[0].data = Object.values(prodCounts);
-            chartInstances.products.update();
-        }
-
-        function openLeadModal(id) {
-            const lead = leadsData.find(l => l.id === id);
-            if (!lead) return;
-
-            currentLeadModalId = id;
-            document.getElementById('modal-company-name').textContent = lead.razao;
-            document.getElementById('modal-badge-days').textContent = `Aberto há ${lead.daysOpen} ${lead.daysOpen===1?'dia':'dias'}`;
-            document.getElementById('modal-cnpj-info').textContent = `CNPJ: ${lead.cnpj}`;
-            document.getElementById('modal-socio').textContent = lead.socio;
-            document.getElementById('modal-phone').textContent = lead.phone;
-            document.getElementById('modal-location').textContent = `${lead.city} - ${lead.uf} (${lead.region})`;
-            document.getElementById('modal-cep').textContent = lead.cep;
-            document.getElementById('modal-cnae').textContent = lead.cnae;
-            document.getElementById('modal-segment').textContent = `Segmento: ${lead.segment}`;
-            document.getElementById('modal-bundle').textContent = lead.bundle;
-            document.getElementById('modal-mrr-estimate').textContent = `Estimativa Ticket MRR: R$ ${lead.mrr.toLocaleString('pt-BR')} /mês`;
-
-            document.getElementById('viability-progress').classList.add('hidden');
-            document.getElementById('viability-result').classList.add('hidden');
-            document.getElementById('viability-bar').style.width = '0%';
-
-            renderLeadNotes(lead);
-            document.getElementById('modal-lead-detail').classList.remove('hidden');
-        }
-
-        function renderLeadNotes(lead) {
-            const list = document.getElementById('modal-notes-list');
-            list.innerHTML = '';
-            if (lead.notes.length === 0) {
-                list.innerHTML = `<p class="text-slate-500 italic">Nenhuma anotação registrada ainda.</p>`;
+        async function searchBrasilApiLive() {
+            const val = document.getElementById('liveCnpjInput').value.replace(/\D/g, '');
+            if (!val || val.length !== 14) {
+                alert('Digite um CNPJ válido com 14 dígitos.');
                 return;
             }
-            lead.notes.forEach(note => {
-                const item = document.createElement('div');
-                item.className = "p-2 bg-slate-900 rounded border border-slate-800 text-[11px] text-slate-300 flex items-start gap-2";
-                item.innerHTML = `<i class="fa-solid fa-comment text-cyanaccent mt-0.5"></i> <span>${escapeHtml(note)}</span>`;
-                list.appendChild(item);
-            });
-        }
-
-        function addLeadNote() {
-            const input = document.getElementById('input-new-note');
-            const txt = input.value.trim();
-            if (!txt || !currentLeadModalId) return;
-
-            const lead = leadsData.find(l => l.id === currentLeadModalId);
-            if (lead) {
-                lead.notes.push(txt);
-                renderLeadNotes(lead);
-                input.value = '';
-                showToast("Anotação salva no histórico do lead!", "success");
-            }
-        }
-
-        function runViabilityTest() {
-            const lead = leadsData.find(l => l.id === currentLeadModalId);
-            if (!lead) return;
-
-            const btn = document.getElementById('btn-run-viability');
-            const progress = document.getElementById('viability-progress');
-            const percent = document.getElementById('viability-percent');
-            const bar = document.getElementById('viability-bar');
-            const result = document.getElementById('viability-result');
-
-            btn.disabled = true;
-            btn.classList.add('opacity-50');
-            progress.classList.remove('hidden');
-            result.classList.add('hidden');
-
-            let width = 0;
-            const interval = setInterval(() => {
-                width += 20;
-                bar.style.width = width + '%';
-                percent.textContent = width + '%';
-
-                if (width >= 100) {
-                    clearInterval(interval);
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-50');
-
-                    result.classList.remove('hidden');
-                    result.innerHTML = `
-                        <div class="flex items-start gap-2 text-emerald-400">
-                            <i class="fa-solid fa-circle-check text-base mt-0.5"></i>
-                            <div>
-                                <strong class="font-bold">VIABILIDADE TÉCNICA APROVADA!</strong>
-                                <p class="text-slate-300 text-[11px] mt-0.5">Rede de Fibra Everson Tech ativa no CEP <span class="font-mono font-bold text-white">${lead.cep}</span> (${lead.city}/${lead.uf}). 8 portas GPON livres no armário óptico mais próximo (distância &lt; 120 metros).</p>
-                            </div>
-                        </div>
-                    `;
-                    showToast("Viabilidade técnica aprovada para " + lead.city + "!", "success");
-                }
-            }, 250);
-        }
-
-        function openWhatsAppForCurrentLead() {
-            const lead = leadsData.find(l => l.id === currentLeadModalId);
-            if (!lead) return;
-
-            const cleanPhone = lead.phone.replace(/\D/g, '');
-            const text = `Olá, ${lead.socio}! Tudo bem?\n\nParabéns pela abertura recente da ${lead.razao} em ${lead.city}/${lead.uf}! 🚀\n\nSou o especialista da Everson Tech e vi que a viabilidade técnica de Fibra Dedicada e Linhas Móveis já está liberada para o seu CEP (${lead.cep}). Podemos falar 3 minutos?`;
-
-            const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
-
-        function quickOpenWa(id) {
-            currentLeadModalId = id;
-            openWhatsAppForCurrentLead();
-        }
-
-        function openAddLeadModal() {
-            document.getElementById('modal-add-lead').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        }
-
-        function handleSaveNewLead(event) {
-            event.preventDefault();
-            const newLead = {
-                id: Date.now(),
-                razao: document.getElementById('new-razao').value,
-                cnpj: document.getElementById('new-cnpj').value,
-                region: document.getElementById('new-region').value,
-                uf: document.getElementById('new-uf').value,
-                city: document.getElementById('new-city').value,
-                cnae: "6810-8/00 - Atividades Imobiliárias",
-                segment: document.getElementById('new-segment').value,
-                daysOpen: parseInt(document.getElementById('new-days').value, 10),
-                socio: document.getElementById('new-socio').value,
-                phone: document.getElementById('new-phone').value,
-                cep: "01000-000",
-                score: 90,
-                stage: "d1",
-                product: "Fibra Dedicada",
-                mrr: 1500,
-                bundle: "Fibra Dedicada 500MB + Linhas Móveis Corporativas",
-                notes: ["Cadência ativada ao cadastrar empresa na base"]
-            };
-
-            leadsData.unshift(newLead);
-            closeModal('modal-add-lead');
-            showToast(`Empresa "${newLead.razao}" inserida com sucesso!`, 'success');
-            applyFilters();
-        }
-
-        function switchTab(tabId) {
-            const tabs = ['tab-leads', 'tab-kanban', 'tab-playbook', 'tab-analytics'];
-            tabs.forEach(t => {
-                const sec = document.getElementById(t);
-                const btn = document.getElementById(`btn-${t}`);
-                if (t === tabId) {
-                    sec.classList.remove('hidden');
-                    btn.classList.add('active');
-                    btn.classList.remove('text-slate-400');
-                } else {
-                    sec.classList.add('hidden');
-                    btn.classList.remove('active');
-                    btn.classList.add('text-slate-400');
-                }
-            });
-
-            if (tabId === 'tab-analytics') {
-                updateChartsData();
-            }
-        }
-
-        function copyToClipboard(elementId) {
-            const text = document.getElementById(elementId).textContent.trim();
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
             try {
-                document.execCommand('copy');
-                showToast("Texto copiado para a Área de Transferência!", "success");
-            } catch (err) {
-                showToast("Erro ao copiar texto.", "error");
+                const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${val}`);
+                if (!res.ok) throw new Error('CNPJ não encontrado.');
+                const data = await res.json();
+                alert(`[BrasilAPI]\n\nEmpresa: ${data.razao_social}\nSituação: ${data.descricao_situacao_cadastral}\nUF: ${data.uf}`);
+            } catch (e) {
+                alert(e.message);
             }
-            document.body.removeChild(textarea);
-        }
-
-        function exportDataCSV() {
-            let csv = "ID,Razao Social,CNPJ,Regiao,UF,Cidade,Segmento,Dias de Abertura,Socio,Telefone,Stage,MRR Estimado\n";
-            filteredLeads.forEach(l => {
-                csv += `"${l.id}","${l.razao}","${l.cnpj}","${l.region}","${l.uf}","${l.city}","${l.segment}","${l.daysOpen}","${l.socio}","${l.phone}","${l.stage}","${l.mrr}"\n`;
-            });
-
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', `Everson_Tech_Leads_Telecom_${new Date().toISOString().slice(0,10)}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            showToast("Exportação CSV concluída!", "success");
-        }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-emerald-950 border-emerald-800 text-emerald-200' : 
-                            type === 'error' ? 'bg-red-950 border-red-800 text-red-200' : 'bg-blue-950 border-blue-800 text-blue-200';
-            const icon = type === 'success' ? 'fa-circle-check text-emerald-400' : 
-                         type === 'error' ? 'fa-triangle-exclamation text-red-400' : 'fa-info-circle text-cyanaccent';
-
-            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl border shadow-xl text-xs font-semibold ${bgColor} transition-all duration-300 opacity-0 transform translate-y-2`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-base"></i> <span>${escapeHtml(message)}</span>`;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', 'translate-y-2');
-            }, 10);
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
     </script>
 </body>
