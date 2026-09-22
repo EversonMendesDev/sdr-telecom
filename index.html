@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everson Tech - SDR & Gestão Telecom</title>
+    <title>Everson Tech - SDR Telecom & Gestão Completa</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,10 +29,11 @@
         }
     </script>
     
-    <!-- Google Fonts & Icons -->
+    <!-- Google Fonts, Chart.js & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -45,11 +46,15 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #070a11; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        .kanban-col { min-height: 280px; }
     </style>
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen custom-scrollbar antialiased selection:bg-cyanaccent selection:text-slate-900">
 
-    <!-- ==================== TELA DE LOGIN ==================== -->
+    <!-- CONTAINER DE NOTIFICAÇÕES TOAST -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- ==================== 1. TELA DE LOGIN ==================== -->
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-darkbg to-black">
         <div class="w-full max-w-md z-10">
             <div class="text-center mb-6">
@@ -59,13 +64,13 @@
                     </div>
                 </div>
                 <h1 class="text-2xl font-extrabold tracking-tight text-white">EVERSON<span class="text-cyanaccent">TECH</span></h1>
-                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Sistema de Prospecção & Gestão SDR</p>
+                <p class="text-xs text-slate-400 mt-1 uppercase tracking-widest font-semibold">Sistema Unificado SDR Telecom & Forecast</p>
             </div>
 
             <div class="glass-panel p-8 rounded-2xl shadow-2xl border border-slate-800">
                 <form onsubmit="handleAuthLogin(event)" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">E-mail de Acesso</label>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">E-mail Corporativo</label>
                         <input type="email" id="inputEmail" required placeholder="ex: sdr1@eversontech.com.br ou gestor@..."
                             class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyanaccent">
                     </div>
@@ -86,7 +91,7 @@
                 </form>
 
                 <div class="mt-6 pt-5 border-t border-slate-800">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2">Credenciais de Teste Disponíveis</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center mb-2">Credenciais de Teste</p>
                     <div class="grid grid-cols-2 gap-2 text-[10px]">
                         <button onclick="fillLogin('gestor@eversontech.com.br', 'gestor123')" class="bg-slate-900 hover:bg-slate-800 p-2 rounded-lg text-left border border-slate-800">
                             <span class="font-bold text-cyanaccent block">Gestor de Rede</span>
@@ -102,7 +107,7 @@
         </div>
     </div>
 
-    <!-- ==================== DASHBOARD PRINCIPAL ==================== -->
+    <!-- ==================== 2. DASHBOARD PRINCIPAL ==================== -->
     <div id="mainDashboard" class="hidden min-h-screen flex flex-col bg-darkbg">
         <header class="bg-slate-950/90 border-b border-slate-800 sticky top-0 z-30 backdrop-blur-md px-6 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-4">
@@ -130,37 +135,91 @@
         </header>
 
         <div class="flex-1 p-6 max-w-[1600px] w-full mx-auto space-y-6">
-            <div class="flex items-center space-x-2 border-b border-slate-800 pb-2">
+            
+            <!-- NAVEGAÇÃO DE ABAS -->
+            <div class="flex items-center space-x-2 border-b border-slate-800 pb-2 overflow-x-auto custom-scrollbar">
                 <button onclick="switchTab('leadsTab')" id="btn-leadsTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-cyanaccent text-slate-950">
                     <i class="fa-solid fa-database mr-1.5"></i> Base CNPJs & Anticolisão
                 </button>
                 <button onclick="switchTab('forecastTab')" id="btn-forecastTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-chart-line mr-1.5"></i> Dashboard de Metas & Forecast
+                    <i class="fa-solid fa-chart-line mr-1.5"></i> Dashboard Metas & Forecast
+                </button>
+                <button onclick="switchTab('kanbanTab')" id="btn-kanbanTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-kanban mr-1.5"></i> Esteira Kanban (Drag & Drop)
+                </button>
+                <button onclick="switchTab('scriptsTab')" id="btn-scriptsTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-comment-dots mr-1.5"></i> Playbook & Scripts
+                </button>
+                <button onclick="switchTab('analyticsTab')" id="btn-analyticsTab" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-chart-pie mr-1.5"></i> Analytics & Rede
                 </button>
             </div>
 
-            <!-- TAB 1: LEADS & ANTICOLISÃO -->
+            <!-- TAB 1: BASE DE LEADS & FILTROS & ANTICOLISÃO -->
             <div id="leadsTab" class="tab-content space-y-4">
+                
+                <!-- Consulta ao Vivo BrasilAPI -->
                 <div class="glass-panel p-4 rounded-2xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                         <h3 class="text-xs font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-cloud-arrow-down text-cyanaccent"></i>
                             Puxar CNPJ ao Vivo na Receita Federal (BrasilAPI Grátis)
                         </h3>
-                        <p class="text-[11px] text-slate-400">Valide dados de qualquer empresa aberta no Brasil sem custo.</p>
+                        <p class="text-[11px] text-slate-400">Valide dados oficiais de qualquer empresa no Brasil sem custo.</p>
                     </div>
                     <div class="flex items-center space-x-2 w-full md:w-auto">
-                        <input type="text" id="liveCnpjInput" placeholder="Digite o CNPJ..." class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white">
-                        <button onclick="searchBrasilApiLive()" class="bg-cyanaccent hover:opacity-90 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs">
+                        <input type="text" id="liveCnpjInput" placeholder="Digite o CNPJ..." class="bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:border-cyanaccent focus:outline-none">
+                        <button onclick="searchBrasilApiLive()" class="bg-cyanaccent hover:opacity-90 text-slate-950 font-bold px-3 py-1.5 rounded-xl text-xs whitespace-nowrap">
                             Consultar
                         </button>
                     </div>
                 </div>
 
+                <!-- Painel de Filtros -->
+                <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Região do País</label>
+                            <select id="filterRegion" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white">
+                                <option value="ALL">Todas as Regiões</option>
+                                <option value="Sudeste">Sudeste</option>
+                                <option value="Sul">Sul</option>
+                                <option value="Centro-Oeste">Centro-Oeste</option>
+                                <option value="Nordeste">Nordeste</option>
+                                <option value="Norte">Norte</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Segmento / Setor</label>
+                            <select id="filterSegment" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white">
+                                <option value="ALL">Todos os Segmentos</option>
+                                <option value="Logística">Logística & Transportes</option>
+                                <option value="Saúde">Saúde & Clínicas</option>
+                                <option value="Serviços">Serviços Profissionais</option>
+                                <option value="Varejo">Comércio & Varejo</option>
+                                <option value="Construção">Construção Civil</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Recência Abertura</label>
+                            <select id="filterDays" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white">
+                                <option value="30">Últimos 30 Dias</option>
+                                <option value="15">Últimos 15 Dias</option>
+                                <option value="7">Últimos 7 Dias</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Buscar Nome/CNPJ</label>
+                            <input type="text" id="searchKeyword" oninput="applyFilters()" placeholder="Buscar empresa..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-white focus:border-cyanaccent focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Leads -->
                 <div class="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
                     <div class="p-4 border-b border-slate-800 flex items-center justify-between">
                         <h3 class="text-xs font-bold text-white uppercase tracking-wider">Mapeamento de CNPJs Novos (&lt;30 dias)</h3>
-                        <span class="text-[11px] text-slate-400">Bloqueio automático de leads duplicados entre SDRs</span>
+                        <span class="text-[11px] text-slate-400">SDRs não acessam ou editam contatos de outros colegas</span>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -169,8 +228,9 @@
                                 <tr>
                                     <th class="p-3">CNPJ / Razão Social</th>
                                     <th class="p-3">Abertura</th>
-                                    <th class="p-3">Estado</th>
+                                    <th class="p-3">Estado / Região</th>
                                     <th class="p-3">Segmento</th>
+                                    <th class="p-3">Oferta Telecom</th>
                                     <th class="p-3">SDR Responsável</th>
                                     <th class="p-3 text-center">Ação Anticolisão</th>
                                 </tr>
@@ -187,7 +247,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="text-sm font-bold text-white">Painel Geral de Metas & Previsão de Fechamento (Forecast)</h3>
-                            <p class="text-xs text-slate-400">Meta Padrão: R$ 8.000,00 de MRR / SDR</p>
+                            <p class="text-xs text-slate-400">Meta Padrão: R$ 8.000,00 de MRR / SDR | Previsão ponderada pela taxa de conversão da esteira</p>
                         </div>
                         <span class="bg-emeraldgreen/20 text-emeraldgreen font-mono text-xs px-3 py-1 rounded-full font-bold">Meta Global: R$ 80.000 MRR</span>
                     </div>
@@ -209,10 +269,146 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB 3: ESTEIRA KANBAN DRAG & DROP -->
+            <div id="kanbanTab" class="tab-content hidden space-y-4">
+                <p class="text-xs text-slate-400 flex items-center gap-1.5"><i class="fa-solid fa-hand-pointer text-cyanaccent"></i> <strong>Dica SDR:</strong> Arraste e solte os cards entre as colunas para atualizar a fase de prospeção.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 overflow-x-auto pb-4 custom-scrollbar">
+                    
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[220px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 1)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300">Dia 1: Boas-Vindas</span>
+                            <span id="kb-count-1" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-1"></div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[220px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 2)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300">Dia 2: Cold Call</span>
+                            <span id="kb-count-2" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-2"></div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[220px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 3)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300">Dia 4: WhatsApp</span>
+                            <span id="kb-count-3" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-3"></div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[220px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 4)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300">Dia 6: Viabilidade</span>
+                            <span id="kb-count-4" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-4"></div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-2xl border border-slate-800 min-w-[220px] space-y-3" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 5)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-slate-300">Dia 8: Proposta</span>
+                            <span id="kb-count-5" class="text-[10px] font-mono bg-slate-800 px-2 py-0.5 rounded text-cyanaccent">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-5"></div>
+                    </div>
+
+                    <div class="glass-panel p-3 rounded-2xl border border-emeraldgreen/30 min-w-[220px] space-y-3 bg-emerald-950/10" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 6)">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                            <span class="text-xs font-bold text-emeraldgreen">SQL / Fechado</span>
+                            <span id="kb-count-6" class="text-[10px] font-mono bg-emeraldgreen/20 text-emeraldgreen px-2 py-0.5 rounded">0</span>
+                        </div>
+                        <div class="space-y-2 kanban-col" id="kanban-stage-6"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: PLAYBOOK & SCRIPTS -->
+            <div id="scriptsTab" class="tab-content hidden space-y-4">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <h3 class="text-xs font-bold text-white uppercase tracking-wider">Gerador de Scripts SDR</h3>
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Segmento</label>
+                            <select id="scriptSegment" onchange="generateScript()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="varejo">Comércio & Varejo</option>
+                                <option value="servicos">Serviços Profissionais</option>
+                                <option value="saude">Saúde & Clínicas</option>
+                                <option value="logistica">Logística & Transportes</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-400 mb-1">Canal de Contato</label>
+                            <select id="scriptChannel" onchange="generateScript()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+                                <option value="wa">WhatsApp Mensagem Inicial</option>
+                                <option value="call">Script de Cold Call</option>
+                                <option value="email">E-mail Corporativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 glass-panel p-5 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold text-white">Script Personalizado Gerado</h3>
+                            <button onclick="copyScriptText()" class="bg-slate-800 hover:bg-slate-700 text-cyanaccent px-3 py-1.5 rounded-lg text-xs font-semibold">
+                                <i class="fa-regular fa-copy"></i> Copiar Texto
+                            </button>
+                        </div>
+
+                        <div id="scriptOutput" class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed whitespace-pre-line min-h-[180px]">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: ANALYTICS & REDE -->
+            <div id="analyticsTab" class="tab-content hidden space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-xs font-bold text-white">Novos CNPJs por Região do País</h3>
+                        <div class="h-64 relative"><canvas id="regionChart"></canvas></div>
+                    </div>
+
+                    <div class="glass-panel p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <h3 class="text-xs font-bold text-white">Mix de Produtos Mapeados</h3>
+                        <div class="h-64 relative"><canvas id="productChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- ==================== LÓGICA JAVASCRIPT CORRIGIDA ==================== -->
+    <!-- MODAL DE DETALHES DE LEAD -->
+    <div id="leadModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-xl rounded-2xl border border-slate-800 overflow-hidden shadow-2xl relative space-y-4 p-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div>
+                    <h3 id="modalCompanyName" class="text-sm font-bold text-white">Razão Social</h3>
+                    <p id="modalCnpj" class="text-xs font-mono text-cyanaccent">00.000.000/0001-00</p>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <p><strong class="text-cyanaccent">Estado:</strong> <span id="modalUf">SP</span></p>
+                <p><strong class="text-cyanaccent">Segmento:</strong> <span id="modalSegment">Logística</span></p>
+                <p><strong class="text-cyanaccent">Oferta Recomendada:</strong> <span id="modalOffer" class="text-emeraldgreen font-bold">Móvel + Fibra</span></p>
+            </div>
+            <div class="pt-3 border-t border-slate-800 flex justify-end space-x-2">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl text-xs">Fechar</button>
+                <a id="modalWaBtn" href="#" target="_blank" class="px-4 py-2 bg-emeraldgreen text-slate-950 font-bold rounded-xl text-xs flex items-center space-x-2">
+                    <i class="fa-brands fa-whatsapp"></i> <span>Chamar no WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
     <script>
         const systemUsers = [
             { id: 'gestor', name: 'Everson Mendes (Gestor)', email: 'gestor@eversontech.com.br', pass: 'gestor123', role: 'GESTOR' },
@@ -229,13 +425,41 @@
         ];
 
         let mockLeads = [
-            { id: 101, name: "ALPHA LOGISTICA LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 3, uf: "SP", segment: "Logística", ownerId: "sdr1", stage: 2, mrrValue: 1200 },
-            { id: 102, name: "CLINICA BEM ESTAR SAUDE", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 6, uf: "PR", segment: "Saúde", ownerId: "sdr2", stage: 3, mrrValue: 850 },
-            { id: 103, name: "NEXUS TECNOLOGIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 10, uf: "MG", segment: "Serviços", ownerId: null, stage: 1, mrrValue: 2400 },
-            { id: 104, name: "SUPERMERCADO NOVO RUMO", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 12, uf: "BA", segment: "Varejo", ownerId: null, stage: 1, mrrValue: 600 }
+            { id: 101, name: "ALPHA LOGISTICA & DISTRIBUICAO LTDA", cnpj: "52.148.902/0001-80", cleanCnpj: "52148902000180", days: 3, region: "Sudeste", uf: "SP", segment: "Logística", offer: "Móvel M2M + Fibra Dedicada", ownerId: "sdr1", stage: 2, mrrValue: 1200, phone: "11998823120" },
+            { id: 102, name: "CLINICA BEM ESTAR SAUDE INTEGRADA", cnpj: "52.310.114/0001-22", cleanCnpj: "52310114000122", days: 6, region: "Sul", uf: "PR", segment: "Saúde", offer: "PABX Cloud + Banda Larga", ownerId: "sdr2", stage: 3, mrrValue: 850, phone: "41987712340" },
+            { id: 103, name: "NEXUS TECNOLOGIA E CONSULTORIA B2B", cnpj: "52.405.889/0001-05", cleanCnpj: "52405889000105", days: 10, region: "Sudeste", uf: "MG", segment: "Serviços", offer: "Fibra IP Dedicado + Firewall", ownerId: null, stage: 1, mrrValue: 2400, phone: "31991234567" },
+            { id: 104, name: "SUPERMERCADO NOVO RUMO LTDA", cnpj: "52.512.330/0001-99", cleanCnpj: "52512330000199", days: 12, region: "Nordeste", uf: "BA", segment: "Varejo", offer: "Fibra PME + Chip POS M2M", ownerId: null, stage: 1, mrrValue: 600, phone: "71981122334" },
+            { id: 105, name: "CONSTRUTORA E EDIFICACOES SUL LTDA", cnpj: "52.601.778/0001-44", cleanCnpj: "52601778000144", days: 2, region: "Sul", uf: "SC", segment: "Construção", offer: "Modem 5G Obras + Móvel", ownerId: "sdr1", stage: 5, mrrValue: 3500, phone: "48999887766" },
+            { id: 106, name: "AGRO TRANSPORTES GOIAS EIRELI", cnpj: "52.710.001/0001-10", cleanCnpj: "52710001000110", days: 18, region: "Centro-Oeste", uf: "GO", segment: "Logística", offer: "Móvel Frota + Link Satélite", ownerId: "sdr3", stage: 4, mrrValue: 1800, phone: "62982233445" }
         ];
 
         let currentUser = null;
+        let chartRegionInst = null;
+        let chartProductInst = null;
+
+        // SISTEMA DE NOTIFICAÇÕES TOAST
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-emerald-950/90 border-emerald-500/50 text-emerald-300' :
+                            type === 'error' ? 'bg-rose-950/90 border-rose-500/50 text-rose-300' :
+                            'bg-slate-900/90 border-cyanaccent/50 text-cyanaccent';
+            const icon = type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-xmark' : 'fa-circle-info';
+            
+            toast.className = `flex items-center space-x-3 px-4 py-3 rounded-xl border backdrop-blur-md shadow-xl text-xs font-semibold transform transition-all duration-300 translate-y-2 opacity-0 pointer-events-auto ${bgColor}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-sm"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
 
         function fillLogin(email, pass) {
             document.getElementById('inputEmail').value = email;
@@ -254,8 +478,12 @@
                 document.getElementById('mainDashboard').classList.remove('hidden');
                 document.getElementById('navUserName').innerText = user.name;
                 document.getElementById('navUserRole').innerText = user.role === 'GESTOR' ? 'Gestor de Rede' : 'SDR Operacional';
+                
                 renderLeadsTable();
                 renderGoalsAndForecast();
+                renderKanban();
+                generateScript();
+                showToast(`Bem-vindo, ${user.name.split(' ')[0]}!`, 'success');
             } else {
                 document.getElementById('loginError').classList.remove('hidden');
             }
@@ -265,18 +493,44 @@
             currentUser = null;
             document.getElementById('mainDashboard').classList.add('hidden');
             document.getElementById('loginScreen').classList.remove('hidden');
+            showToast('Sessão encerrada com sucesso.', 'info');
         }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white";
+            });
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            if (activeBtn) activeBtn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold bg-cyanaccent text-slate-950";
+
+            if (tabId === 'analyticsTab') initCharts();
+        }
+
+        function applyFilters() {
+            renderLeadsTable();
         }
 
         function renderLeadsTable() {
             const tbody = document.getElementById('leadsTableBody');
             tbody.innerHTML = '';
 
-            mockLeads.forEach(lead => {
+            const region = document.getElementById('filterRegion')?.value || 'ALL';
+            const segment = document.getElementById('filterSegment')?.value || 'ALL';
+            const maxDays = parseInt(document.getElementById('filterDays')?.value || '30');
+            const keyword = (document.getElementById('searchKeyword')?.value || '').toLowerCase();
+
+            const filtered = mockLeads.filter(item => {
+                const matchRegion = (region === 'ALL' || item.region === region);
+                const matchSegment = (segment === 'ALL' || item.segment === segment);
+                const matchDays = item.days <= maxDays;
+                const matchKw = item.name.toLowerCase().includes(keyword) || item.cnpj.includes(keyword);
+                return matchRegion && matchSegment && matchDays && matchKw;
+            });
+
+            filtered.forEach(lead => {
                 const owner = systemUsers.find(u => u.id === lead.ownerId);
                 const isOwner = lead.ownerId === currentUser.id;
                 const isUnassigned = !lead.ownerId;
@@ -284,7 +538,7 @@
 
                 let actionHtml = '';
                 if (isUnassigned) {
-                    actionHtml = `<button onclick="claimLead(${lead.id})" class="bg-emeraldgreen text-slate-950 font-bold px-3 py-1 rounded text-[10px]">Assumir Lead</button>`;
+                    actionHtml = `<button onclick="claimLead(${lead.id})" class="bg-emeraldgreen text-slate-950 font-bold px-3 py-1 rounded text-[10px] hover:opacity-90">Assumir Lead</button>`;
                 } else if (isOwner) {
                     actionHtml = `<span class="text-cyanaccent font-bold"><i class="fa-solid fa-check"></i> Seu Lead</span>`;
                 } else {
@@ -295,14 +549,16 @@
                 }
 
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/60";
+                tr.className = "hover:bg-slate-900/60 cursor-pointer";
+                tr.onclick = () => openModal(lead);
                 tr.innerHTML = `
                     <td class="p-3"><p class="font-bold text-white">${lead.name}</p><p class="font-mono text-[10px] text-cyanaccent">${lead.cnpj}</p></td>
                     <td class="p-3 font-mono text-[10px]">${lead.days} dias atrás</td>
-                    <td class="p-3">${lead.uf}</td>
+                    <td class="p-3">${lead.uf} (${lead.region})</td>
                     <td class="p-3">${lead.segment}</td>
+                    <td class="p-3 font-semibold text-cyanaccent">${lead.offer}</td>
                     <td class="p-3 font-semibold">${owner ? owner.name : '<span class="text-amber-400">Sem Dono</span>'}</td>
-                    <td class="p-3 text-center">${actionHtml}</td>
+                    <td class="p-3 text-center" onclick="event.stopPropagation()">${actionHtml}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -314,6 +570,8 @@
                 lead.ownerId = currentUser.id;
                 renderLeadsTable();
                 renderGoalsAndForecast();
+                renderKanban();
+                showToast(`Você assumiu o atendimento da empresa ${lead.name}`, 'success');
             }
         }
 
@@ -323,11 +581,83 @@
                 lead.ownerId = null;
                 renderLeadsTable();
                 renderGoalsAndForecast();
+                renderKanban();
+                showToast(`Lead ${lead.name} liberado para a fila geral.`, 'info');
+            }
+        }
+
+        // LÓGICA DE KANBAN COM DRAG & DROP
+        function handleDragStart(e, leadId) {
+            e.dataTransfer.setData("text/plain", leadId);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e, targetStage) {
+            e.preventDefault();
+            const leadId = parseInt(e.dataTransfer.getData("text/plain"));
+            const lead = mockLeads.find(l => l.id === leadId);
+
+            if (lead) {
+                if (currentUser.role === 'SDR' && lead.ownerId && lead.ownerId !== currentUser.id) {
+                    showToast("Bloqueio Anticolisão: Não pode mover um lead de outro SDR!", "error");
+                    return;
+                }
+
+                lead.stage = targetStage;
+                if (!lead.ownerId && currentUser.role === 'SDR') {
+                    lead.ownerId = currentUser.id;
+                }
+
+                renderKanban();
+                renderGoalsAndForecast();
+                renderLeadsTable();
+                showToast(`Lead "${lead.name}" movido para a Etapa ${targetStage}!`, "success");
+            }
+        }
+
+        function renderKanban() {
+            for(let i=1; i<=6; i++) {
+                const el = document.getElementById(`kanban-stage-${i}`);
+                if (el) el.innerHTML = '';
+            }
+
+            const counts = [0, 0, 0, 0, 0, 0];
+
+            mockLeads.forEach(lead => {
+                const stageIdx = lead.stage || 1;
+                counts[stageIdx - 1]++;
+                const col = document.getElementById(`kanban-stage-${stageIdx}`);
+                if (!col) return;
+
+                const owner = systemUsers.find(u => u.id === lead.ownerId);
+                const card = document.createElement('div');
+                card.draggable = true;
+                card.ondragstart = (e) => handleDragStart(e, lead.id);
+                card.className = "bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-1 hover:border-cyanaccent/50 cursor-grab active:cursor-grabbing transition-all";
+                card.onclick = () => openModal(lead);
+                card.innerHTML = `
+                    <p class="font-bold text-xs text-white truncate">${lead.name}</p>
+                    <p class="text-[10px] font-mono text-cyanaccent">${lead.cnpj}</p>
+                    <div class="flex items-center justify-between text-[10px] pt-1">
+                        <span class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-300">${lead.uf}</span>
+                        <span class="text-slate-400 font-medium">${owner ? owner.name.split(' ')[0] : 'Sem Dono'}</span>
+                    </div>
+                `;
+                col.appendChild(card);
+            });
+
+            for(let i=1; i<=6; i++) {
+                const cnt = document.getElementById(`kb-count-${i}`);
+                if (cnt) cnt.innerText = counts[i-1];
             }
         }
 
         function renderGoalsAndForecast() {
             const tbody = document.getElementById('sdrGoalsTable');
+            if (!tbody) return;
             tbody.innerHTML = '';
             const sdrs = systemUsers.filter(u => u.role === 'SDR');
 
@@ -335,7 +665,7 @@
                 const targetMRR = 8000;
                 const sdrLeads = mockLeads.filter(l => l.ownerId === sdr.id);
                 const realizado = sdrLeads.filter(l => l.stage === 6).reduce((acc, curr) => acc + curr.mrrValue, 0);
-                const forecast = sdrLeads.reduce((acc, curr) => acc + (curr.mrrValue * 0.5), 0);
+                const forecast = sdrLeads.reduce((acc, curr) => acc + (curr.mrrValue * (curr.stage * 0.15)), 0);
                 const percent = Math.min(100, Math.round((realizado / targetMRR) * 100));
 
                 const tr = document.createElement('tr');
@@ -351,22 +681,87 @@
             });
         }
 
-        // FUNÇÃO CONSULTA BRASILAPI (100% CORRIGIDA)
+        function generateScript() {
+            const channel = document.getElementById('scriptChannel')?.value || 'wa';
+            const output = document.getElementById('scriptOutput');
+            if (!output) return;
+
+            let text = "";
+            if (channel === 'wa') {
+                text = `Olá! Tudo bem?\n\nVi que registaram o CNPJ da empresa recentemente. Parabéns pela abertura!\n\nSou especialista da Everson Tech. Ajudamos empresas a estruturarem Fibra Dedicada, Móvel e PABX Virtual antes da inauguração.\n\nPodemos enviar uma viabilidade sem compromisso?`;
+            } else if (channel === 'call') {
+                text = `SDR: "Olá, falo com o responsável? Aqui é da Everson Tech.\nNotei a abertura recente do CNPJ e sabemos que a internet e telefone são essenciais desde o primeiro dia.\n\nJá fecharam fornecedor de telecom para a estrutura?"`;
+            } else {
+                text = `Assunto: Soluções de Conectividade - Novo CNPJ\n\nDesejamos sucesso com a nova operação!\n\nA Everson Tech disponibiliza links dedicados, telefonia móvel e PABX Cloud para novos negócios em todo o Brasil.`;
+            }
+            output.innerText = text;
+        }
+
+        function copyScriptText() {
+            const text = document.getElementById('scriptOutput').innerText;
+            navigator.clipboard.writeText(text);
+            showToast('Script copiado com sucesso!', 'success');
+        }
+
         async function searchBrasilApiLive() {
             const input = document.getElementById('liveCnpjInput');
             if (!input) return;
             const val = input.value.replace(/\D/g, '');
             if (!val || val.length !== 14) {
-                alert('Por favor, digite um CNPJ válido com 14 dígitos.');
+                showToast('Digite um CNPJ válido com 14 dígitos.', 'error');
                 return;
             }
             try {
+                showToast('Consultando Receita Federal via BrasilAPI...', 'info');
                 const res = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${val}`);
                 if (!res.ok) throw new Error('CNPJ não encontrado na Receita Federal.');
                 const data = await res.json();
-                alert(`[BrasilAPI - Receita Federal]\n\nEmpresa: ${data.razao_social}\nSituação: ${data.descricao_situacao_cadastral}\nUF: ${data.uf}\nCNAE: ${data.cnae_fiscal_descricao}`);
+                showToast(`[BrasilAPI] ${data.razao_social} - ${data.descricao_situacao_cadastral}`, 'success');
             } catch (e) {
-                alert(e.message);
+                showToast(e.message, 'error');
+            }
+        }
+
+        function openModal(lead) {
+            document.getElementById('modalCompanyName').innerText = lead.name;
+            document.getElementById('modalCnpj').innerText = lead.cnpj;
+            document.getElementById('modalUf').innerText = `${lead.uf} (${lead.region})`;
+            document.getElementById('modalSegment').innerText = lead.segment;
+            document.getElementById('modalOffer').innerText = lead.offer;
+            document.getElementById('modalWaBtn').href = `https://wa.me/55${lead.phone}?text=Olá!%20Falo%20com%20o%20responsável%20da%20${encodeURIComponent(lead.name)}?`;
+            document.getElementById('leadModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('leadModal').classList.add('hidden');
+        }
+
+        function initCharts() {
+            if (chartRegionInst) chartRegionInst.destroy();
+            if (chartProductInst) chartProductInst.destroy();
+
+            const ctxR = document.getElementById('regionChart')?.getContext('2d');
+            if (ctxR) {
+                chartRegionInst = new Chart(ctxR, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Sudeste', 'Sul', 'Nordeste', 'Centro-Oeste', 'Norte'],
+                        datasets: [{ label: 'CNPJs', data: [450, 280, 210, 180, 120], backgroundColor: '#00f0ff' }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            const ctxP = document.getElementById('productChart')?.getContext('2d');
+            if (ctxP) {
+                chartProductInst = new Chart(ctxP, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Fibra Dedicada', 'Móvel Corporativo', 'PABX Cloud', 'M2M / IoT'],
+                        datasets: [{ data: [40, 30, 20, 10], backgroundColor: ['#2563eb', '#00f0ff', '#10b981', '#a855f7'] }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
             }
         }
     </script>

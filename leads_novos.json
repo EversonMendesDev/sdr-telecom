@@ -1,0 +1,30 @@
+[
+    {
+        "id": 52148902,
+        "name": "EMPRESA NOVA 1 LTDA",
+        "cnpj": "52.148.902/0001-80",
+        "cleanCnpj": "52148902000180",
+        "days": 3,
+        "uf": "SP",
+        "segment": "Tecnologia e Serviços Telecom",
+        "offer": "PABX Cloud + Fibra Dedicada",
+        "ownerId": null,
+        "stage": 1,
+        "mrrValue": 1500,
+        "phone": "11988776655"
+    },
+    {
+        "id": 52310114,
+        "name": "EMPRESA NOVA 2 LTDA",
+        "cnpj": "52.310.114/0001-22",
+        "cleanCnpj": "52310114000122",
+        "days": 6,
+        "uf": "RJ",
+        "segment": "Tecnologia e Serviços Telecom",
+        "offer": "PABX Cloud + Fibra Dedicada",
+        "ownerId": null,
+        "stage": 1,
+        "mrrValue": 1500,
+        "phone": "11988776655"
+    }
+]
